@@ -463,30 +463,30 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | phải giống v1 |
-| Hash chốt cổng vòng 1 | phải giống v1 |
-| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: ________ · prepared: ________ · after: ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí | `d385325` (giống v1) |
+| Hash chốt cổng vòng 1 | `a4e3fa99` (giống v1) |
+| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: `R-S6-before-20261119-164029-983686` · prepared: `R-S6-prepared-20261119-164029-983686` · after: `R-S6-after-20261119-170022-89a89a`. Bộ nền sau sửa: `R-base-after-20261119-170023-89a89a`. Grade: `R-S6-grade-20261119-170023-89a89a`. |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | **Không.** Bộ nền ở mốc after: 0 ca ùn, 4.456đ/ticket, ROI 1,24, hoàn sai ngày tệ nhất 0đ. Bộ thẻ S6 ở mốc after: 0 ca ùn, chờ lâu nhất 0 phút (hạn 60 phút), **6.862đ/ticket** (trần đã ký 7.000đ), ROI **0,46** (sàn 0,40), 0 lần lộ dữ liệu, 0 lỗi ghi oan. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Trên S6 ở mốc after, mọi kho và hãng đều pass_rate 1,0, không có hoàn sai hay lỗi oan. Xấu nhất về chi phí là **DN 5.663đ/ticket** và **HCM 5.661đ/ticket**, đều 50% ticket vào hàng chờ; HN chỉ 1.763đ (25%). Hãng chịu hại trong thẻ, **GHSH** (45 lượt), giờ 0 lỗi oan, và `max_faults_per_carrier_day` = 2, đúng trần. **Quyết định không đổi:** chi phí từng kho vẫn dưới 7.000đ, và HCM vẫn là depot cần kiểm cổng trên dữ liệu thật. |
+| Quyết định (khoanh một) | **Tiếp tục** · ~~Thu hẹp~~ · ~~Cải tiến thêm~~ · ~~Dừng~~. Giữ pilot ở **2 depot HN và HCM** như v1, kèm hai điều kiện theo dõi ở dòng "Ngày quyết định lại". |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-S6-after-20261119-170022-89a89a`: đạt đủ 5 ngưỡng `required` trên bộ thẻ. pass_rate **1,0** (từ 0,6667 ở prepared; CI 95% [1,0; 1,0]), pass^k **1,0**, hoàn sai **0đ** (từ 270.000đ), lỗi hãng oan **0** (từ 40 ở base, 20 ở prepared), lộ dữ liệu **0**. |
+| Bằng chứng 2 | `R-base-after-20261119-170023-89a89a`: **không có ca nào mới hỏng** trên bộ nền (110/110 lượt đạt, regression ok). Chi phí 4.456đ, ROI 1,24, 0 ca ùn, như mốc prepared. Grade `R-S6-grade-20261119-170023-89a89a` báo PASS-VISIBLE. |
+| Bằng chứng 3 | Cùng mã S6 after: đạt cả 3 ngưỡng `business_ops`. Chi phí 6.862đ ≤ 7.000đ, ROI 0,46 ≥ 0,40, 0 ca ùn ≤ 0. `escalation_rate` 0,3333 ≤ 0,35. Monitor `max_faults_per_carrier_day` giảm 4 → 2. **Biên còn mỏng:** chi phí chỉ còn cách trần 138đ, vì G4 và G5a chuyển thêm ca sang người duyệt (41,67% ticket vào hàng chờ, gồm 10% kiểm mẫu). |
+| Khớp dòng nào trong `decision_rule` đã ký? | **"Tiếp tục"**: đạt đủ 5 ngưỡng `required` trên bộ nền và trên gói sự cố S6 (gói duy nhất đã chạy), đạt `business_ops` (chi phí ≤ 7.000đ/ticket, ROI ≥ 0,40, 0 ca ùn) và report không còn dòng VƯỢT TRẦN. |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Không áp dụng. Phạm vi pilot thật vẫn là HN và HCM (B8); ticket của CT, DN, HCM-B2B làm thủ công; 1 người trực, 6 ca/giờ. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không áp dụng. |
+| Nếu Dừng: bài học ghi lại | Không áp dụng. |
+| Ngày quyết định lại (trừ khi Dừng) | **27/11/2026**, trước khi `REFUND-v4` có hiệu lực ngày 01/12/2026. Quyết định lại sớm hơn nếu trong pilot xảy ra một trong hai điều: chi phí mỗi ticket vượt 7.000đ, hoặc `max_faults_per_carrier_day` > 2. Khi đó xét Thu hẹp theo `decision_rule`. |
+| PIC ký | Nguyễn Xuân Khánh Linh (Trưởng nhóm, Sản phẩm và kinh doanh), thay mặt bàn MALTO. |
 
 **Chỉ ở v2**
-- Quyết định đổi hay giữ so với v1? Vì con số nào: …
-- Report tự kiểm tra: mã lần chạy `__________` · ô nào còn đỏ (nguyên nhân × tầng): …
-- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: …
-- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: …
-- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: …
+- Quyết định đổi hay giữ so với v1? Vì con số nào: **Giữ Tiếp tục.** Sau sửa, S6 đạt mọi ngưỡng đã ký (pass_rate 0,6667 → 1,0; hoàn sai 270.000đ → 0đ; lỗi oan 20 → 0), bộ nền không có ca nào mới hỏng. Khác v1 ở chỗ biên kinh tế mỏng hơn hẳn: trên S6, chi phí 6.862đ so với trần 7.000đ, ROI 0,46 so với sàn 0,40, trong khi bộ nền là 4.456đ và 1,24.
+- Report tự kiểm tra: mã lần chạy `R-S6-grade-20261119-170023-89a89a` · ô nào còn đỏ (nguyên nhân × tầng): trên bộ thẻ nhìn thấy, không còn ticket hỏng hay dòng vượt trần. Test ẩn chưa chạy trong buổi (`hidden` không có), nên chưa có ma trận nguyên nhân × tầng để đọc.
+- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: G3 sửa nhóm ticket có nêu kiện (`S6-01` … `S6-04`), lỗi oan giảm 40 → 20. Bỏ sót: ticket không nêu kiện mà nhiều kiện cùng trễ (`S6-20`, `S6-21`: vẫn đoán, 270.000đ hoàn sai) và dồn lỗi vượt trần trong ngày (`S6-42`, `S6-43`). Chi tiết ở C1.
+- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: report ghi **"Được phép cân nhắc 'Tiếp tục'"**, không vượt trần, mọi ngưỡng đã ký đều đạt. Quyết định Tiếp tục khớp.
+- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: **dồn lỗi qua nhiều ngày.** Hợp đồng tạm ngưng hãng sau 3 lỗi trong 7 ngày, nhưng bộ thử chỉ mô phỏng một ngày, và G5 đếm cả sổ lỗi chứ chưa lọc theo ngày. Vì vậy Tiếp tục đi kèm điều kiện: pilot phải theo dõi số lỗi theo hãng trong cửa sổ 7 ngày, chứ không chỉ trong một ngày.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: …
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: …
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: …
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: Tracking ghi đầy đủ và kịp thời hãng, tài xế, chặng và nguyên nhân trễ của từng kiện, và mỗi kiện chỉ do một hãng chở suốt hành trình; thực tế kiện có thể đổi hãng hoặc tài xế giữa các chặng, và lượt quét có thể thiếu hoặc nhập bù muộn.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: G3 và G4 NGĂN việc ghi lỗi sai kiện và đoán hãng khi không rõ kiện, vì cả hai chặn trước lệnh ghi đầu tiên và chỉ đọc tracking; G5 chỉ GIẢM việc dồn lỗi, vì hai lỗi đầu trong ngày vẫn tự ghi và cổng chưa lọc theo ngày; cả ba cổng đều không thấy khi chính tracking sai.
+3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: Trên ticket thật ở HN và HCM, đo tỷ lệ đơn tách kiện và ticket không nêu kiện (`ambiguous_multi_parcel_rate`), tải duyệt và thời gian chờ khi một hãng có ngày xấu, chi phí mỗi ticket so với trần 7.000đ, số lỗi của mỗi hãng trong cửa sổ 7 ngày, và độ chính xác của tracking từng kiện so với sổ giao của hãng.
