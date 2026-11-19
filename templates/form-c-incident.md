@@ -378,23 +378,24 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 ## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `__________`)
 
-**Dự thảo vận hành, chờ report after và C6 của cả bàn:** tác hại tài xế/hãng bị ghi lỗi oan có thể xảy ra khi (1) nhiều kiện trễ nhưng không xác định được kiện **và** gate G4 không chuyển người trước lệnh ghi; hoặc (2) lỗi đúng từng ticket nhưng vượt trần 2 lỗi tự động/hãng/ngày **và** gate G5 không chặn; hoặc (3) tracking sai, thiếu hay cập nhật muộn (nhánh còn hở). G4/G5 là mô tả thiết kế trong C5, chưa khẳng định đã ngăn được tác hại: Thu cần cung cấp mã after và regression để đối chiếu.
+**Sau sửa — theo C0 dòng 3–4:** `R-S6-after-20261119-170022-89a89a`; hồi quy `R-base-after-20261119-170023-89a89a`; grade `R-S6-grade-20261119-170023-89a89a`. Trên bộ nhìn thấy, lỗi hãng oan 20 → 0, hoàn sai 270.000đ → 0; bộ nền không có ca mới hỏng. Đây là kết quả mô phỏng, không chứng minh ngăn mọi tình huống thực tế.
 
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
 ```
-[ĐỈNH] ______________________________
+[ĐỈNH] Hãng/tài xế bị ghi lỗi oan hoặc bị dồn lỗi vượt trần
  └─ HOẶC
- ├─ [1] ______________ VÀ [gate ______ hỏng]
- ├─ [2] ______________ VÀ [gate ______ hỏng]
- └─ [3] ______________ (còn hở?)
+├─ [1] Chọn sai kiện/hãng VÀ [G3 hỏng]
+├─ [2] Nhiều kiện trễ không rõ kiện VÀ [G4 hỏng]
+├─ [3] Hãng đã đủ 2 lỗi/ngày VÀ [G5a và lớp dự phòng G5b hỏng]
+└─ [4] Tracking sai, thiếu hoặc cập nhật muộn (còn hở)
 ```
 
 | Nhánh | Gate (hàm trong `guards.py` / khoá config / metric trong `monitors.py`) | Tầng gate (phát hiện / chặn / giới hạn thiệt hại / vận hành) | Giảm hay ngăn? Vì sao | Nhánh còn hở |
 |---|---|---|---|---|
-| [1] | | | | |
-| [2] | | | | |
-| [3] | | | | |
+| [1] | G3 đối chiếu tracking kiện/hãng | Chặn/sửa trước ghi lỗi | Ngăn nhánh đã kiểm khi tracking đúng; S6-01 đạt ở prepared | Tracking có thể sai |
+| [2] | G4 chuyển người trước ghi | Chặn | Ngăn trường hợp nhiều kiện trễ không nêu kiện trong S6-20/21; after đạt 10/10 lượt | Khách nêu kiện bằng chữ hoặc dữ liệu thiếu cần người xác minh |
+| [3] | G5a chuyển người trước hoàn; G5b chặn ghi lỗi | Giới hạn thiệt hại | Giảm dồn lỗi; monitor 4 → 2, S6-42/43 đạt 10/10 lượt | Hai lỗi đầu vẫn tự ghi; logic ngày và cửa sổ 7 ngày cần đo trên dữ liệu thật |
 
 ---
 
@@ -418,9 +419,9 @@ Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "
 
 ## C11 · Câu 3.7 · Cập nhật checklist 9 nhóm việc và Runbook phần 4–5
 
-**Dự thảo chờ đo lại:** B5 nhóm 1 (chất lượng, PIC Đặng Minh Thu), nhóm 4 (quyền hạn, PIC Lê Thế Anh), nhóm 7 (vận hành, PIC Lê Thế Anh) và nhóm 8 (pháp lý, PIC Lê Thế Anh) giữ **Chưa** đến khi có report after, regression và kiểm quy trình. Không suy ra đạt từ code đã sửa.
+**Kết quả đo lại:** C0 dòng 3–4 ghi S6 after và hồi quy bộ nền đạt các ca nhìn thấy; quy trình con người, kênh liên hệ và diễn tập vẫn cần xác nhận. `escalation_rate` 0,3333 là tỉ lệ chuyển người; 0,4167 là tỉ lệ vào hàng chờ gồm kiểm mẫu, theo C12.
 
-**Runbook 4 — đề xuất xử lý S6:** khi nghi ngờ ghi lỗi oan hoặc monitor `max_faults_per_carrier_day` vượt 2, Hạnh báo Tùng kiểm sổ lỗi theo hãng/ngày và tracking từng kiện; nếu xác nhận sai thì Tùng tắt `file_carrier_fault`, chuyển ticket cho người xác minh, Oanh đối soát với hãng. Mốc prepared có 20 lỗi oan; chưa có số after trong tài liệu này. Kênh, người liên hệ hãng và thời hạn thông báo cần nhóm xác nhận; chưa có bằng chứng PII đã rời hệ thống từ sự cố S6.
+**Runbook 4 — xử lý S6:** khi nghi ngờ ghi lỗi oan hoặc monitor `max_faults_per_carrier_day` vượt 2, Hạnh báo Tùng kiểm sổ lỗi theo hãng/ngày và tracking từng kiện; nếu xác nhận sai thì Tùng tắt `file_carrier_fault`, chuyển ticket cho người xác minh, Oanh đối soát với hãng. Prepared có 20 lỗi oan, after ghi 0; monitor 4 → 2. Kênh, người liên hệ hãng và thời hạn thông báo cần nhóm xác nhận; chưa có bằng chứng PII đã rời hệ thống từ sự cố S6.
 
 **Runbook 5 — ba tình huống tuần đầu (đề xuất):** (1) nếu ticket tăng gấp 3 trong một giờ hoặc chờ ≥45 phút, Hạnh báo Tùng rà năng lực 6 ca/người/giờ và gọi hỗ trợ; nếu vượt SLA 60 phút, trưởng nhóm quyết định thu hẹp phạm vi hoặc xử lý tay; (2) nếu LLM lỗi/429, Hạnh báo Tùng dừng lệnh ghi khi không đủ căn cứ và chuyển người, khôi phục sau khi xác minh; thời gian lỗi kích hoạt cần nhóm chốt; (3) nếu người duyệt không tin quyết định, Hạnh giữ thao tác liên quan, đối chiếu tracking và sổ lỗi từng kiện, chuyển Oanh/Tùng khi cần trước khi tiếp tục. Các bước và thời hạn thông báo chưa được diễn tập.
 
@@ -430,8 +431,10 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | # nhóm | Trạng thái mới (Xong / Chưa / Không áp dụng) | Bằng chứng mới (mã lần chạy, mục phiếu, số trong report) | PIC |
 |---|---|---|---|
-| | | | |
-| | | | |
+| 1 Chất lượng | Xong đối với bộ nhìn thấy | `R-S6-after-20261119-170022-89a89a`: lỗi oan 0; `R-base-after-20261119-170023-89a89a`: không ca mới hỏng | Đặng Minh Thu |
+| 4 Quyền hạn | Chưa | G4/G5a/G5b mô tả ở C7; cần diễn tập quyền dừng và phê duyệt thực tế | Lê Thế Anh |
+| 7 Vận hành | Chưa | S6 after 0 ca ùn theo C12; kênh liên hệ và hỗ trợ ca chưa diễn tập | Lê Thế Anh |
+| 8 Pháp lý | Chưa | S6 after lỗi oan và lộ PII 0; cần xác nhận quy trình thông báo hãng thực tế | Lê Thế Anh |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
