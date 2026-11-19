@@ -1,12 +1,12 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3B-DAY10-MALTO-PoCtoPilotGate1",
+  "members": ["NguyenXuanKhanhLinh-2A202603801", "DauHoangMinh-2A202604011", "DangMinhThu-2A202604009", "LeTheAnh-2A202603983"],
+  "incident": "S6",
+  "decision_v1": "Tiếp tục",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Tracking ghi đầy đủ và kịp thời hãng, tài xế, chặng và nguyên nhân trễ của từng kiện, và mỗi kiện chỉ do một hãng chở suốt hành trình; thực tế kiện có thể đổi hãng hoặc tài xế giữa các chặng, và lượt quét có thể thiếu hoặc nhập bù muộn.",
+    "reduce_or_prevent": "G3 và G4 NGĂN việc ghi lỗi sai kiện và đoán hãng khi không rõ kiện, vì cả hai chặn trước lệnh ghi đầu tiên và chỉ đọc tracking; G5 chỉ GIẢM việc dồn lỗi, vì hai lỗi đầu trong ngày vẫn tự ghi và cổng chưa lọc theo ngày; cả ba cổng đều không thấy khi chính tracking sai.",
+    "measure_in_pilot": "Trên ticket thật ở HN và HCM, đo tỷ lệ đơn tách kiện và ticket không nêu kiện (`ambiguous_multi_parcel_rate`), tải duyệt và thời gian chờ khi một hãng có ngày xấu, chi phí mỗi ticket so với trần 7.000đ, số lỗi của mỗi hãng trong cửa sổ 7 ngày, và độ chính xác của tracking từng kiện so với sổ giao của hãng."
   }
 }
