@@ -71,3 +71,33 @@ Dùng Claude (Claude Code) để đọc code agent, gợi ý và viết nháp c�
 
 - Học được: cổng an toàn nên dựa vào nguồn sự thật (tracking, chính sách theo ngày, sổ cái) thay vì sửa model, và phải đặt ở lệnh ghi đầu tiên không đảo ngược được (ghi tiền đi trước ghi lỗi hãng). Khi đầu vào không đủ để biết ai có lỗi (thẻ S6), hành động an toàn là trả quyền cho người, không đoán.
 - Còn chưa chắc: các cổng G1, G3, G4 giả định tracking ghi đúng ngày giao, hãng và nguyên nhân của từng kiện; G5 chỉ đếm trong một ngày mô phỏng, chưa theo cửa sổ 7 ngày của hợp đồng. Cả hai cần đo lại khi pilot thật.
+
+
+## DangMinhThu-2A202604009
+
+### Phần việc phụ trách
+
+Kỹ sư cổng, phần **Đo kiểm**. Phiếu A: giữ cột Offline của câu 1.3 (A2) khớp với trace thật, giải thích cách đọc `pass_rate`, `pass_k` (pass^k), `pass@k`. Phiếu B: B0, B1 (câu 2.1), B2 (lấy trace `T-002@55`), B7.1 (cột mã lần chạy), B7.2 (câu 2.7), B7.3 (câu 2.8, cùng Code), các ô mã chạy và hash chốt ở B8. Phiếu C: C0, mã lần chạy ở C1, C2 Phần 1 và các ô mã lần chạy ở C7. Lệnh: `eval`, `gate`, `trace`, `checkpoint`, `grade`, `check_submission --collect`. Không sửa `lab10/guards.py`, `lab10/monitors.py` hay config.
+
+### Đóng góp cụ thể
+
+- Vòng 1: chạy baseline và đọc số (hoàn sai 20.000đ, 1 lỗi hãng oan, đều do `T-002@55`; kho HCM, hãng VNX xấu nhất); viết lý lẽ tự chặn hay người duyệt (khuyến nghị kết hợp) ở B1; chạy lại hai ticket hiểm của B7.3 và thêm một ca đổi đơn, khách, câu chữ để kiểm quy tắc áp dụng được ngoài bộ nền; chạy `checkpoint`, rồi `eval` ở mốc `prepared` và `gate` (mọi ngưỡng đã ký đạt).
+- Phát hiện và sửa lỗi môi trường: máy đặt `core.autocrlf=true` nên Git đổi file tiêu chí sang CRLF, hash lệch bản đã ký (`gate` báo "tiêu chí ĐÃ BỊ SỬA"); đặt `autocrlf=false` riêng cho repo, khôi phục file về LF, chạy lại baseline.
+- Vòng 2 (thẻ S6): chạy `grade --incident S6` trước khi sửa; dò `S6-01`, `S6-20`, `S6-42` ở hai mốc base và prepared để tìm ba kiểu lỗi (ghi lỗi nhầm kiện, tự đoán khi hai hãng cùng trễ, ghi quá trần lỗi trong ngày); đo lại sau mỗi thay đổi của Minh (G4, G5 rồi G5a) và kiểm hồi quy bộ nền; ghi nhận giá phải trả sau G5a (chuyển người 25% → 41,7%, chi phí 5.228đ → 6.862đ, ROI 0,91 → 0,46, sát ngưỡng 0,4).
+- Gom bài bằng `check_submission --collect` tới khi `ĐỦ THÀNH PHẦN`.
+
+### Bằng chứng
+
+- Commit trên nhánh `minhthu`: `8d238ff`, `f885af4` (chốt vòng 1), `14ae9fa`, `b651707`, `2655f56`, `e5e8517` (gom bài).
+- Vòng 1, bộ nền: base `R-base-before-20261119-152918-0f89e1` (pass_rate 0,9909; hoàn sai 20.000đ; lỗi oan 1) → prepared `R-base-prepared-20261119-162628-983686` (1,0; 0đ; 0). Hash chốt `a4e3fa99`. Dòng B0 1–4, B1.
+- Vòng 2, thẻ S6: grade ban đầu `R-S6-grade-20261119-164029-983686` (FAIL: pass_rate 0,3333 → 0,6667, lỗi oan 40 → 20); after `R-S6-after-20261119-170022-89a89a`, bộ nền `R-base-after-20261119-170023-89a89a`, grade `R-S6-grade-20261119-170023-89a89a` PASS-VISIBLE. Phiếu C: C0, C1, C2 Phần 1, C7.
+- Nhật ký đầy đủ: `runs/journal.jsonl` (đã gom vào `submission/runs/`).
+
+### Dùng AI
+
+Dùng Claude (Claude Code) để chạy các lệnh `eval`, `gate`, `trace`, `checkpoint`, `grade`, `check_submission --collect`, đọc output và chẩn đoán lỗi hash do CRLF, soạn nháp các ô Phiếu A/B/C của phần Đo kiểm, xử lý xung đột khi merge và commit, push. Số liệu trong phiếu lấy trực tiếp từ output lệnh và `runs/journal.jsonl`. AI không viết cổng xử lý riêng theo mã ticket; các ngưỡng, config và quyết định v1, v2 do cả nhóm chốt.
+
+### Exit ticket
+
+- Học được: một con số trong quyết định chỉ có giá trị khi trỏ được về một mã lần chạy chạy trên đúng code và config hiện tại, nên phải ghi `--note` cho mỗi lần đo; và "hết lỗi" chưa đủ, phải đọc cả giá phải trả (chuyển người, chi phí, ROI) vì cổng G5a làm S6 sạch nhưng ROI sát ngưỡng đã ký. Một lỗi nhỏ về môi trường (CRLF) cũng đủ làm hash tiêu chí lệch và `gate` cảnh báo sai.
+- Còn chưa chắc: bài kiểm tra ẩn dùng đơn, khách, ngày khác nên `pass_rate` 1,0 trên bộ nền và bộ S6 chưa chứng minh cổng tổng quát; G5 chỉ đếm trong một ngày mô phỏng, chưa theo cửa sổ 7 ngày; và ROI 0,46 có thể xuống dưới 0,4 nếu tỉ lệ ticket cần chuyển người tăng ở pilot thật.
