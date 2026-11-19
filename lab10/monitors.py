@@ -63,7 +63,31 @@ def unrecorded_cause_fault_rate(trials):
     return _rate(trials, bad)
 
 
+def max_faults_per_carrier_day(trials):
+    """Bên thứ ba (S6): số lỗi hãng tự động lớn nhất mà MỘT hãng nhận trong MỘT ngày vận hành (cùng day + seed).
+    So với ops_limits.max_auto_strikes_per_carrier_per_day = 2; vượt là hãng nhỏ bị dồn lỗi trong ngày."""
+    count = {}
+    for t in trials:
+        for e in t.get("events") or []:
+            if e.get("type") == "tool" and e.get("tool") == "file_carrier_fault":
+                key = (t.get("day"), t.get("seed"), e.get("carrier_id"))
+                count[key] = count.get(key, 0) + 1
+    return max(count.values(), default=0)
+
+
+def ambiguous_multi_parcel_rate(trials):
+    """Kỹ thuật (S6): tỉ lệ ticket KHÔNG nêu kiện mà đơn có từ 2 kiện trễ trở lên (không biết lỗi của hãng nào)."""
+    def amb(t):
+        if (t.get("ticket") or {}).get("parcel_id"):
+            return False
+        tr = next((e for e in t.get("events") or [] if e.get("type") == "tracking"), None)
+        return bool(tr) and sum(1 for p in tr.get("parcels", []) if p.get("delay", 0) > 0) >= 2
+    return _rate(trials, amb)
+
+
 MONITORS = {
+    "max_faults_per_carrier_day": max_faults_per_carrier_day,
+    "ambiguous_multi_parcel_rate": ambiguous_multi_parcel_rate,
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
     "model_override_rate": model_override_rate,
     "directive_obeyed_rate": directive_obeyed_rate,
