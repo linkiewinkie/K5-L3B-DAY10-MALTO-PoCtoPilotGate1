@@ -16,7 +16,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 |   1 | Nguyễn Xuân Khánh Linh | 2A202603801 | Sản phẩm và kinh doanh | Có |
 |   2 | Đậu Hoàng Minh | 2A202604011 | Kỹ sư cổng | |
 |   3 | Đặng Minh Thu | 2A202604009 | Kỹ sư cổng (Đo kiểm) | |
-|   4 | Lê Thế Anh | | Vận hành và pháp lý | |
+|   4 | Lê Thế Anh | 2A202603983| Vận hành và pháp lý | |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
 
