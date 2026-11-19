@@ -67,6 +67,44 @@ Phiếu C câu 3.1 (C2), lá kỹ thuật C6, C7, C8 (vòng 2). File: `lab10/gua
 
 Dùng Claude (Claude Code) để đọc code agent, gợi ý và viết nháp cổng G1–G5 trong `guards.py`, monitor trong `monitors.py`, nháp các ô Phiếu A/B/C, nháp config cho nhóm, xử lý xung đột khi merge, và soạn slide cùng kịch bản demo. Mình đã chạy test, trace, ticket tự viết và kiểm lại từng cổng; các ngưỡng, config và quyết định v1/v2 do cả nhóm chốt.
 
+## LeTheAnh-2A202603983
+
+### Phần việc phụ trách
+
+Vai Vận hành và pháp lý.
+
+- Phiếu A: câu 1.2 và 1.4.
+- Phiếu B: B4, B5, B7.5 và B7.6; cấu hình `operations` và `legal`.
+- Phiếu C: C3.2, C4, C5 câu 3.3, C9–C11 cho thẻ S6.
+- Điền `submission/submission.json`.
+
+### Đóng góp cụ thể
+
+- Viết mục tiêu từ góc nhìn của chị Oanh và chị Hạnh; đề xuất tín hiệu theo dõi nguy cơ ghi lỗi oan cho hãng.
+- Phân tích HAZOP, lập checklist go-live và soạn runbook vận hành, pháp lý.
+- Điền cấu hình người phụ trách, người duyệt, năng lực ca trực, điều kiện dừng và giới hạn dữ liệu gửi bên thứ ba.
+- Phân tích tác động của sự cố S6 đối với hãng và tài xế; viết HAZOP, giả định môi trường, risk register và cập nhật runbook sau sự cố.
+- Điền thông tin nhóm, thẻ S6, quyết định v1/v2 và ba dòng bắt buộc trong `submission/submission.json`.
+
+### Bằng chứng
+
+- Commit `fc2a48f`: Phiếu B và cấu hình vận hành/pháp lý.
+- Commit `55f2294`: bản nháp phần vận hành/pháp lý của Phiếu C.
+- Commit `8db8bb3`: cập nhật C9–C11 và `submission/submission.json`.
+- Kết quả S6 và hồi quy được tham chiếu từ Phiếu C do Đo kiểm ghi; mình không tự chạy các lần đo chính thức đó.
+
+### Dùng AI
+
+Dùng Codex để hỗ trợ đọc và giải thích yêu cầu, soạn nháp Phiếu A/B/C,
+cập nhật cấu hình, xử lý Git và kiểm tra thành phần bài nộp.
+Các số liệu và quyết định của nhóm được đối chiếu với tài liệu, báo cáo và
+ý kiến của các thành viên.
+
+### Exit ticket
+
+- Điều học được: [viết điều bạn thực sự hiểu được sau bài lab].
+- Điều còn chưa chắc: [viết điều bạn còn muốn hỏi hoặc kiểm tra thêm].
+
 ### Exit ticket
 
 - Học được: cổng an toàn nên dựa vào nguồn sự thật (tracking, chính sách theo ngày, sổ cái) thay vì sửa model, và phải đặt ở lệnh ghi đầu tiên không đảo ngược được (ghi tiền đi trước ghi lỗi hãng). Khi đầu vào không đủ để biết ai có lỗi (thẻ S6), hành động an toàn là trả quyền cho người, không đoán.
