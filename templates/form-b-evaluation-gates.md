@@ -31,8 +31,8 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-base-before-20261119-152918-0f89e1` | base · base | (baseline, chưa có cổng) | 0,9909 (110 lần chạy; [0,9727; 1,0]) | 0,9545 | 20.000đ · 1 · 0 | 0,2273 | Chưa đạt 2 ngưỡng bắt buộc (tiền hoàn sai, lỗi hãng oan) do một ca duy nhất `T-002@55`; còn lại đạt, kể cả chi phí 4.203đ và ROI 1,34. |
 | 2 | `R-base-after-20261119-152941-0f89e1` | base · after | Thêm cổng vòng 1 của Code: G1 (chính sách + tiền hoàn), G2 (phê duyệt), G3 (lỗi hãng + nội dung gửi hãng); `config/operating_gates.json` chưa đổi | 1,0 (110 lần chạy; [1,0; 1,0]) | 1,0 | 0đ · 0 · 0 | 0,2273 | `T-002@55` hết hỏng, không có ca mới hỏng; tỉ lệ chuyển người không đổi, chi phí 4.202đ, ROI 1,38. |
-| 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
-| 4 | | | | | | | | |
+| 3 | `R-base-prepared-20261119-162628-983686` | base · prepared | (cổng vòng 1 đã chốt, hash `a4e3fa99`) | 1,0 (110 lần chạy; [1,0; 1,0]) | 1,0 | 0đ · 0 · 0 | 0,2727 | Mọi ngưỡng đã ký đều `[ĐẠT]`, không vượt trần; chi phí 4.456đ, ROI 1,24, 0 ca ùn. Bằng chứng cho v1. |
+| 4 | `R-base-after-20261119-162618-983686` | base · after | Điền config `business`/`operations`/`legal` (trần 2.000.000đ, 1 người trực 6 ca/giờ, lấy mẫu 10%, `decision_note` bật), chạy ngay trước khi chốt | 1,0 (110 lần chạy; [1,0; 1,0]) | 1,0 | 0đ · 0 · 0 | 0,2727 | Không ca mới hỏng so với base; chi phí tăng 4.202đ → 4.456đ vì lấy mẫu và ghi chú quyết định, vẫn dưới 7.000đ. (Chạy trước dòng 3 theo thời gian.) |
 
 ---
 
@@ -398,9 +398,9 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 
 | | **v1** (phút 105–115, TRƯỚC khi nhận thẻ sự cố) |
 |---|---|
-| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | |
-| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | |
-| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: ________ · bộ nền với cổng vòng 1 (prepared): ________ |
+| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `d385325` |
+| Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `a4e3fa99` |
+| Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261119-152918-0f89e1` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261119-162628-983686` |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
 | Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
 | Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
