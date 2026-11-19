@@ -401,19 +401,19 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 | Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `d385325` |
 | Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `a4e3fa99` |
 | Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261119-152918-0f89e1` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261119-162628-983686` |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt phần nào, vì sao | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | **Không.** Report prepared in `vượt trần: không`: 0 ca ùn, chờ lâu nhất 0 phút (hạn 60 phút); chi phí 4.456đ/ticket (làm tay 10.000đ); ticket tốn LLM nhiều nhất 770đ (trần 1.500đ); ROI 1,24; tổng hoàn tự động một ngày 155.000đ (trần 2.000.000đ); hoàn sai ngày tệ nhất 0đ. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Đọc khối "theo kho và hãng" ở cuối output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Mọi kho và hãng đều pass_rate 1,0, không có hoàn sai, lỗi hãng oan hay lộ dữ liệu. Xấu nhất về chi phí là nhóm **chưa rõ kho `?`** (1 ticket/ngày, đơn không tra được nên luôn chuyển người): **10.359đ/ticket, cao hơn làm tay**. Trong các kho thật, đắt nhất là **DN 4.646đ/ticket** (tỷ lệ vào hàng chờ 40%), vẫn dưới 7.000đ. **Quyết định không đổi:** nhóm `?` không phải một depot để đưa vào hay cắt khỏi pilot; ticket không tra được đơn vẫn phải chuyển người, kể cả khi làm tay. |
+| Quyết định (khoanh một) | **Tiếp tục** · ~~Thu hẹp~~ · ~~Cải tiến thêm~~ · ~~Dừng~~. Pilot thật chạy ở **2 depot HN và HCM** theo đề bài. |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-prepared-20261119-162628-983686`: đạt đủ 5 ngưỡng `required`. pass_rate **1,0** (≥ 0,96; CI 95% [1,0; 1,0]), pass^k **1,0** (≥ 0,90), hoàn sai **0đ**, lỗi hãng oan **0**, lộ dữ liệu **0** (đều ≤ 0). |
+| Bằng chứng 2 | Cùng mã lần chạy: đạt cả 3 ngưỡng `business_ops`. Chi phí **4.456đ/ticket** (≤ 7.000đ), ROI **1,24** (≥ 0,40), **0** ca ùn (≤ 0). `escalation_rate` **0,2273** (≤ 0,35). Tính cả 10% kiểm mẫu thì **27,27%** quyết định vào hàng chờ (6 ca/ngày), vẫn trong sức 1 người duyệt 6 ca/giờ. |
+| Bằng chứng 3 | So với baseline `R-base-before-20261119-152918-0f89e1`: ca hỏng duy nhất `T-002@55` (hoàn thừa 20.000đ, 1 lỗi oan cho VNX) đã hết ở prepared, và **không có ca nào mới hỏng** (110/110 lượt đạt). Bật kiểm mẫu 10% và ghi chú giải thích chỉ làm chi phí tăng 4.202đ → 4.456đ/ticket (B0 dòng 2 và 4). |
+| Khớp dòng nào trong `decision_rule` đã ký? | **"Tiếp tục"**: đạt đủ 5 ngưỡng `required` trên bộ nền, đạt `business_ops` (chi phí ≤ 7.000đ/ticket, ROI ≥ 0,40, 0 ca ùn) và report không còn dòng VƯỢT TRẦN. Ở mốc v1 bàn chưa chạy gói sự cố nào, nên điều kiện "mọi gói sự cố đã chạy" xét trên bộ nền. |
+| Nếu Thu hẹp: cắt phần nào, vì sao | Không áp dụng. Phạm vi đo vòng 1 là `all` (B7.4). **Chọn 2 depot cho pilot thật theo số ở prepared:** **HN** (7 ticket/ngày, 2.079đ/ticket, 14,29% vào hàng chờ) và **HCM** (5 ticket/ngày, 3.447đ/ticket, 40% vào hàng chờ). Cặp này có nhiều ticket nhất (12/22 ticket/ngày), gồm hai mức tải duyệt khác nhau, rẻ hơn cặp HN và DN (DN 4.646đ/ticket với cùng 40% vào hàng chờ), và HCM là nơi có ca sai ở baseline nên pilot kiểm được cổng vòng 1 trên dữ liệu thật. Ticket của CT, DN, HCM-B2B tiếp tục làm thủ công trong pilot. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | Không áp dụng. |
+| Nếu Dừng: bài học ghi lại | Không áp dụng. |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Bộ nền chỉ có 22 ticket mock, chạy MockLLM tất định: **không có ticket nào của kho sỉ HCM-B2B** (đơn từ 2 triệu), chưa đo với LLM thật, người dùng thật hay giờ cao điểm; mỗi lỗi hiếm chỉ có 5 seed để lộ ra. pass_rate 1,0 trên bộ nền không chứng minh cổng đủ cho đơn, khách và cách viết mới. |
+| Ngày quyết định lại (trừ khi Dừng) | **27/11/2026**, trước khi `REFUND-v4` có hiệu lực ngày 01/12/2026 (hạn mức tự động còn 100.000đ, trễ do bất khả kháng không ghi lỗi hãng; xem B3), khớp ngày xem lại tiêu chí ở Phiếu A. |
+| PIC ký | Nguyễn Xuân Khánh Linh (Trưởng nhóm, Sản phẩm và kinh doanh), thay mặt bàn MALTO. |
 
 Xong v1 thì lưu và đẩy một bản (sau mốc này không sửa cột v1):
 
