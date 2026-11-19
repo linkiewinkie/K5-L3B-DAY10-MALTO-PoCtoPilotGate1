@@ -67,6 +67,11 @@ Phiếu C câu 3.1 (C2), lá kỹ thuật C6, C7, C8 (vòng 2). File: `lab10/gua
 
 Dùng Claude (Claude Code) để đọc code agent, gợi ý và viết nháp cổng G1–G5 trong `guards.py`, monitor trong `monitors.py`, nháp các ô Phiếu A/B/C, nháp config cho nhóm, xử lý xung đột khi merge, và soạn slide cùng kịch bản demo. Mình đã chạy test, trace, ticket tự viết và kiểm lại từng cổng; các ngưỡng, config và quyết định v1/v2 do cả nhóm chốt.
 
+### Exit ticket
+
+- Học được: cổng an toàn nên dựa vào nguồn sự thật (tracking, chính sách theo ngày, sổ cái) thay vì sửa model, và phải đặt ở lệnh ghi đầu tiên không đảo ngược được (ghi tiền đi trước ghi lỗi hãng). Khi đầu vào không đủ để biết ai có lỗi (thẻ S6), hành động an toàn là trả quyền cho người, không đoán.
+- Còn chưa chắc: các cổng G1, G3, G4 giả định tracking ghi đúng ngày giao, hãng và nguyên nhân của từng kiện; G5 chỉ đếm trong một ngày mô phỏng, chưa theo cửa sổ 7 ngày của hợp đồng. Cả hai cần đo lại khi pilot thật.
+
 ## LeTheAnh-2A202603983
 
 ### Phần việc phụ trách
@@ -102,10 +107,15 @@ Các số liệu và quyết định của nhóm được đối chiếu với t
 
 ### Exit ticket
 
-- Điều học được: [viết điều bạn thực sự hiểu được sau bài lab].
-- Điều còn chưa chắc: [viết điều bạn còn muốn hỏi hoặc kiểm tra thêm].
+- Điều học được: Một quyết định của trợ lý hoàn tiền có thể ảnh hưởng đến
+  bên thứ ba không trực tiếp dùng hệ thống. Trong thẻ S6, ghi lỗi sai kiện
+  có thể khiến hãng hoặc tài xế bị phạt oan. Vì vậy, trước khi ghi lỗi cần
+  đối chiếu đúng kiện, hãng và nguyên nhân trong tracking; nếu không đủ
+  căn cứ thì chuyển người xác minh. Cần kiểm soát dữ liệu cá nhân trước
+  khi gửi thông tin cho hãng.
 
-### Exit ticket
+- Điều còn chưa chắc: Em muốn tìm hiểu thêm ai chịu trách nhiệm thông báo
+  và khắc phục khi hãng hoặc tài xế đã bị ghi lỗi oan, và dữ liệu cá nhân
+  đã gửi nhầm cho bên thứ ba có thể được xử lý như thế nào.
 
-- Học được: cổng an toàn nên dựa vào nguồn sự thật (tracking, chính sách theo ngày, sổ cái) thay vì sửa model, và phải đặt ở lệnh ghi đầu tiên không đảo ngược được (ghi tiền đi trước ghi lỗi hãng). Khi đầu vào không đủ để biết ai có lỗi (thẻ S6), hành động an toàn là trả quyền cho người, không đoán.
-- Còn chưa chắc: các cổng G1, G3, G4 giả định tracking ghi đúng ngày giao, hãng và nguyên nhân của từng kiện; G5 chỉ đếm trong một ngày mô phỏng, chưa theo cửa sổ 7 ngày của hợp đồng. Cả hai cần đo lại khi pilot thật.
+
