@@ -7,7 +7,8 @@ bị ùn, tỉ lệ chuyển người duyệt, chi phí mỗi ticket, ROI, tổn
     python3 -m lab10.grade --incident Sx [--hidden <thư mục test ẩn>] [--expect-hash <hash, tuỳ chọn cho giảng viên>]
 
 `--incident Sx` là BẮT BUỘC: Sx là số thẻ bàn bốc được từ Lab Coach (S1..S8). Gói sự cố `incidents/Sx/` chỉ có sau khi
-lệnh nhận thẻ (`git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main`) ở phút 125; chưa có thì lệnh từ chối và nói rõ việc cần làm (exit 3), không chấm gì.
+lệnh nhận thẻ ở phút 125 (Lab Coach mở repo thẻ; bàn lấy đúng thư mục thẻ của mình theo URL, không cần remote:
+`git fetch <URL repo thẻ> main`, `git checkout FETCH_HEAD -- incidents/Sx`, `git commit -m "Nhận thẻ Sx"`); chưa có thì lệnh từ chối và nói rõ việc cần làm (exit 3), không chấm gì.
 
 Kiểm 6 thứ, in bảng, ghi report JSON + Markdown có mã lần chạy vào runs/:
   1 integrity   file bị khoá (agent, tools, eval, data, gói sự cố, tests) còn nguyên so với MANIFEST
@@ -60,11 +61,17 @@ def refuse_if_not_released(incident: str) -> str | None:
     if missing:
         return (f"TỪ CHỐI KIỂM TRA: chưa có gói sự cố {incident} trên máy này (thiếu {', '.join('incidents/' + incident + '/' + f for f in missing)}).\n"
                 f"  Thẻ sự cố chỉ được phát ở phút 125 của buổi học. Việc cần làm:\n"
-                f"    1. Chờ Lab Coach báo đã phát thẻ, rồi chạy:  git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main\n"
-                f"    2. Kiểm tra đã có thư mục incidents/{incident}/ (và file incident-cards.md).\n"
+                f"    1. Chờ Lab Coach báo số thẻ và báo đã mở repo thẻ, rồi chạy lần lượt từng dòng (ở gốc repo của bàn, đã commit hết):\n"
+                f"         git fetch {CARDS_REPO} main\n"
+                f"         git checkout FETCH_HEAD -- incidents/{incident}\n"
+                f"         git commit -m \"Nhận thẻ {incident}\"\n"
+                f"    2. Kiểm tra đã có thư mục incidents/{incident}/ (4 file).\n"
                 f"    3. Chạy lại:  python3 -m lab10.grade --incident {incident}\n"
-                f"  Nếu chưa gắn remote upstream, xem README mục 2 (bước 2a). Nếu đã git pull mà vẫn thiếu, báo Lab Coach. Chưa có gì được kiểm tra, chưa có report nào được ghi.")
+                f"  git fetch báo Repository not found hoặc hỏi mật khẩu: repo thẻ chưa được mở, chờ Lab Coach báo rồi chạy lại (không cần đăng nhập). Chưa có gì được kiểm tra, chưa có report nào được ghi.")
     return None
+
+
+CARDS_REPO = "https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_cards.git"
 
 
 def drawn_card(incident: str) -> dict:
@@ -81,14 +88,20 @@ def drawn_card(incident: str) -> dict:
     return {"recorded": found, "status": status}
 
 
-def integrity(hidden: Path | None) -> dict:
-    """Compare locked files with the manifest (the copy shipped with the hidden tests wins)."""
+def integrity(hidden: Path | None, incident: str | None = None) -> dict:
+    """Compare locked files with the manifest (the copy shipped with the hidden tests wins).
+    A team that only took its own card has no incidents/<other card>/ folder: those entries are skipped,
+    but any file that IS present must match, and the team's own card must be complete."""
     src = hidden / "MANIFEST.json" if hidden and (hidden / "MANIFEST.json").exists() else ROOT / "lab10" / "MANIFEST.json"
     if not src.exists():
         return {"ok": False, "changed": ["(thiếu MANIFEST.json)"], "manifest": str(src)}
     man = load_json(src)
-    changed = [rel for rel, h in man.items()
-               if not (ROOT / rel).exists() or hashlib.sha256((ROOT / rel).read_bytes()).hexdigest() != h]
+    def _absent_other_card(rel: str) -> bool:
+        parts = rel.split("/")
+        return (len(parts) == 3 and parts[0] == "incidents" and parts[1] != incident
+                and not (ROOT / "incidents" / parts[1]).exists())
+    changed = [rel for rel, h in man.items() if not _absent_other_card(rel)
+               and (not (ROOT / rel).exists() or hashlib.sha256((ROOT / rel).read_bytes()).hexdigest() != h)]
     return {"ok": not changed, "changed": changed, "manifest": src.name if src.parent == ROOT / "lab10" else "hidden"}
 
 
@@ -182,7 +195,7 @@ def grade(incident: str, hidden_arg=None, expect_hash=None) -> dict:
     hidden = find_hidden(hidden_arg, incident)
     rep: dict = {"run_id": new_run_id(incident, "grade"), "incident": incident, "grader_version": VERSION,
                  "code_hash": code_hash()}
-    rep["integrity"] = integrity(hidden)
+    rep["integrity"] = integrity(hidden, incident)
     if expect_hash is None and hidden and (hidden / "signed_hashes.json").exists():
         team = criteria.load().get("team") if criteria.CRITERIA.exists() else None
         expect_hash = load_json(hidden / "signed_hashes.json").get(team)
@@ -411,7 +424,7 @@ def to_markdown(r: dict) -> str:
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--incident", metavar="Sx",
-                    help="BẮT BUỘC: số thẻ bàn bốc được (S1..S8); gói incidents/Sx/ có sau khi nhận thẻ từ repo mẫu ở phút 125")
+                    help="BẮT BUỘC: số thẻ bàn bốc được (S1..S8); gói incidents/Sx/ có sau khi nhận thẻ từ repo thẻ ở phút 125")
     ap.add_argument("--hidden", help="thư mục test ẩn (mặc định: $LAB10_HIDDEN_DIR, rồi ../lab-coach/hidden nếu có)")
     ap.add_argument("--expect-hash", help="tuỳ chọn cho giảng viên: tiền tố hash tiêu chí để đối chiếu (không bắt buộc)")
     ap.add_argument("--quiet", action="store_true")

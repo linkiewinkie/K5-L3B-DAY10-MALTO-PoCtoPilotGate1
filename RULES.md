@@ -20,7 +20,7 @@ Luật vận hành của lab (ký tiêu chí, chốt vòng 1, test ẩn, không 
 ## Secret và API key
 
 - Lab không cần khóa API. Không commit API key, mật khẩu hay file `.env`.
-- Danh tính Git dùng MSSV và email giả `<MSSV>@example.com` (README mục 2, bước 2b), không dùng email cá nhân.
+- Danh tính Git dùng MSSV và email giả `<MSSV>@example.com` (README mục 2, bước 2a), không dùng email cá nhân.
 
 ## Nộp muộn và lỗi kỹ thuật
 

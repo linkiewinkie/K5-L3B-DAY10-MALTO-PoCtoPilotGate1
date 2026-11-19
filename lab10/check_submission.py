@@ -5,8 +5,8 @@
 
 Bài nộp nằm trong thư mục submission/ (xem submission/README.md):
   submission.json    bàn tự điền: tên bàn, thành viên, số thẻ, quyết định v1 và v2, ba dòng bắt buộc
-  Nộp: đẩy lên repo của bàn đặt tên đúng dạng K5_Day10_3A_<TenNhom> hoặc K5_Day10_3B_<TenNhom>
-  (ví dụ K5_Day10_3A_TenNhom; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm.
+  Nộp: đẩy lên repo của bàn đặt tên đúng dạng K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1 hoặc K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1
+  (ví dụ K5-L3A-DAY10-NhomSao-PoCtoPilotGate1; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm.
   code/              cổng vòng 1 (bản đã chốt) và cổng vòng 2, chỉ số theo dõi
   config/            cổng kinh doanh + vận hành + pháp lý (vòng 1 và hiện tại), tiêu chí đã ký kèm hash
   runs/              báo cáo tự kiểm tra, ba mốc base / prepared / after (kèm mã lần chạy), journal.jsonl (mọi lần chạy)
@@ -264,7 +264,7 @@ def main(argv=None):
     if missing:
         print(f"CHƯA ĐỦ: còn {len(missing)} mục. Làm theo dòng '->' rồi chạy lại lệnh này.")
         sys.exit(1)
-    print("ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5_Day10_3A_<TenNhom> hoặc K5_Day10_3B_<TenNhom>, ví dụ K5_Day10_3A_TenNhom; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn.")
+    print("ĐỦ THÀNH PHẦN. Đẩy lên repo của bàn (tên đúng dạng K5-L3A-DAY10-<TenNhom>-PoCtoPilotGate1 hoặc K5-L3B-DAY10-<TenNhom>-PoCtoPilotGate1, ví dụ K5-L3A-DAY10-NhomSao-PoCtoPilotGate1; TenNhom không dấu, không cách) rồi gửi link repo cho team chấm theo cách Lab Coach hướng dẫn. Mỗi thành viên tự nộp link repo trên LMS (SUBMISSION.md).")
 
 
 if __name__ == "__main__":

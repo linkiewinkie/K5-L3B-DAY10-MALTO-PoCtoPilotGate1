@@ -5,10 +5,10 @@ Mỗi checkpoint ứng với một mốc trong [Timeline ở README mục 3](REA
 ## CP1 · Cài đặt và chia vai (phút 0–15)
 
 - **Mục tiêu:** repo của bàn chạy được, mọi người biết vai của mình.
-- **Cần làm:** README mục 2 (tạo repo, clone, gắn `upstream`, danh tính Git); điền `TEAM.md`; chia ba vai.
-- **Sản phẩm:** repo `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` ở chế độ Public; bảng thành viên trong `TEAM.md`.
-- **Cần hiểu:** vì sao cần `upstream` (thẻ sự cố tới từ repo mẫu ở phút 125).
-- **Tự kiểm tra:** `python3 -m unittest discover -s tests` in `Ran 13 tests … OK`; `git remote -v` có `origin` và `upstream`.
+- **Cần làm:** README mục 2 (fork và đặt tên repo, clone, danh tính Git); điền `TEAM.md`; chia ba vai.
+- **Sản phẩm:** repo `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` là fork Public của repo mẫu, đã đổi đúng tên; bảng thành viên trong `TEAM.md`.
+- **Cần hiểu:** thẻ sự cố chưa có trong repo; ở phút 125 bàn lấy đúng thư mục thẻ của mình từ repo thẻ bằng URL, không cần gắn thêm remote.
+- **Tự kiểm tra:** `python3 -m unittest discover -s tests` in `Ran 13 tests … OK`; `git remote -v` có `origin` trỏ về repo của bàn; repo trên GitHub ghi *forked from* repo mẫu.
 
 ## CP2 · Ký tiêu chí (phút 15–65) · Phiếu A
 
