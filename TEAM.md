@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): `MALTO`
 - Lớp: `L3B`
 - Repo của bàn: `K5-L3B-DAY10-MALTO-PoCtoPilotGate1`
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): `S6`
 
 ## Thành viên
 
