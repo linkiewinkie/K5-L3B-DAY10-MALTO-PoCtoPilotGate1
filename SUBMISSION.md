@@ -2,16 +2,16 @@
 
 ## Loại bài
 
-**Nhóm** (một bàn 3–4 người). Một repo cho cả bàn, do trưởng nhóm tạo, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
+**Nhóm** (một bàn 3–4 người). Một repo cho cả bàn, do trưởng nhóm fork từ repo mẫu rồi đổi tên, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
 
 ## Đặt tên repo
 
 | Loại | Tên | Ghi chú |
 |---|---|---|
-| Repo đề (repo mẫu) | `K5_L3_Day10_PoC-to-Pilot_Gate1_student` | Không push lên repo này |
+| Repo đề (repo mẫu) | `K5_L3_Day10_PoC-to-Pilot_Gate1_student` | Không push, không mở Pull request về repo này |
 | Repo bài nộp của bàn | `K5-<L3A\|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` | Ví dụ `K5-L3A-DAY10-NhomSao-PoCtoPilotGate1`. `TenNhom` không dấu, không khoảng trắng, không thêm chữ `Lop` |
 
-Tên theo quy ước chung của khóa: `Kn-L3{A|B}-DAYxx-TenNhom-TenBai`. Với lab này, `TenBai` là `PoCtoPilotGate1`. Dòng cuối của lệnh 7 còn in dạng tên cũ (`K5_Day10_3A_…`). Không dùng dạng đó. Đặt tên repo theo dạng trong bảng trên. Giá trị `team` trong `config/acceptance_criteria.json` và `submission/submission.json` phải **giống hệt** tên repo.
+Tên theo quy ước chung của khóa: `Kn-L3{A|B}-DAYxx-TenNhom-TenBai`. Với lab này, `TenBai` là `PoCtoPilotGate1`. Đặt tên repo theo dạng trong bảng trên. Giá trị `team` trong `config/acceptance_criteria.json` và `submission/submission.json` phải **giống hệt** tên repo.
 
 ## Cấu trúc và deliverable phải nộp
 

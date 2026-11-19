@@ -45,7 +45,7 @@ def load_suite(suite: str, pack_dir: Path | None = None) -> tuple[dict, list[dic
     pack = Path(pack_dir) if pack_dir else INCIDENTS / suite
     if not pack.exists():
         raise SystemExit(f"Chưa có gói sự cố {suite} ở {pack}.\n"
-                         f"Thẻ sự cố được phát ở phút 125: chờ Lab Coach báo, chạy `git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main`, rồi dùng đúng số thẻ bàn bốc được (S1..S8).")
+                         f"Thẻ sự cố được phát ở phút 125: chờ Lab Coach báo số thẻ và mở repo thẻ, chạy lần lượt `git fetch https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_cards.git main`, `git checkout FETCH_HEAD -- incidents/Sx`, `git commit -m \"Nhận thẻ Sx\"` (không cần gắn remote), rồi dùng đúng số thẻ của bàn (S1..S8).")
     return apply_patch(world, load_json(pack / "world_patch.json")), load_jsonl(pack / "tickets.jsonl")
 
 

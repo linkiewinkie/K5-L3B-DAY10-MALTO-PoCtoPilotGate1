@@ -12,7 +12,7 @@
 | Vòng | Bàn làm gì | Mốc để so sánh |
 |---|---|---|
 | **Vòng 1** (phút 15–115), chưa biết sự cố | Mục tiêu và thước đo → viết Bản tiêu chí → **ký tiêu chí TRƯỚC khi chạy đánh giá lần nào** (phút 60–65) → đo mốc base → pre-mortem, HAZOP, checklist 9 nhóm việc → **code 2–3 cổng phòng ngừa** và đặt cổng kinh doanh, vận hành, pháp lý → **chốt cổng vòng 1** → quyết định **v1** | **base**: chưa có cổng nào |
-| **Vòng 2** (phút 125–200), sau khi nhận thẻ (`git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main`) và bốc thẻ | **Chạy tự kiểm tra trước, chỉ với cổng vòng 1** → phân tích → sửa → quyết định **v2** | **prepared**: chỉ có cổng vòng 1 · **after**: sau khi sửa |
+| **Vòng 2** (phút 125–200), sau khi nhận thẻ của bàn (ba lệnh nhận thẻ ở README mục 3, phút 125–135) | **Chạy tự kiểm tra trước, chỉ với cổng vòng 1** → phân tích → sửa → quyết định **v2** | **prepared**: chỉ có cổng vòng 1 · **after**: sau khi sửa |
 
 Demo cuối buổi so sánh ba mốc **base · prepared · after**: cổng bàn chuẩn bị trước đỡ được gì, phần nào phải sửa sau.
 
@@ -130,7 +130,7 @@ Tiêu chí đã ký từ phút 60–65; ở đây không ký nữa. Làm đúng 
 
 ## Cách tung
 
-- Phút 125: Lab Coach báo "đã phát thẻ" (thẻ được đẩy lên **repo mẫu**, không phải repo của từng bàn). Mỗi bàn chạy `git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main` để tải về thư mục `incidents/S1…S8/` và file `incident-cards.md` (trước mốc này repo của bàn chưa có hai thứ đó). Các cờ `--allow-unrelated-histories -X ours` giữ nguyên bài của bàn và chỉ lấy thêm thẻ. Nếu chưa gắn `upstream`, xem README mục 2. Mỗi **cặp bàn** cử một người lên **bốc số** (S1–S8). Bàn **chỉ làm đúng thẻ có số bốc được**: `incidents/Sx/card.md`.
+- Phút 125: Lab Coach báo **số thẻ của bàn** (S1–S8, bốc thăm) và mở repo thẻ (chuyển sang công khai). Bàn chạy lần lượt `git fetch https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_cards.git main`, `git checkout FETCH_HEAD -- incidents/Sx`, `git commit -m "Nhận thẻ Sx"` (thay `Sx`) để chép **đúng thư mục `incidents/Sx/`** của bàn vào repo; lệnh lấy thẻ theo URL nên không cần gắn remote, không gộp lịch sử git, không đụng bài của bàn. Bàn **chỉ làm đúng thẻ của bàn**: `incidents/Sx/card.md`.
 - Ghi số đã bốc vào dòng `Thẻ đã bốc:` ở đầu Phiếu C (`templates/form-c-incident.md`).
 - **Việc đầu tiên, trước khi sửa bất cứ thứ gì:** `python3 -m lab10.grade --incident Sx` (câu 3.0, bước 0 trên thẻ).
 - Lab Coach đọc một câu: *"Đây là tin nhắn bàn nhận được sáng nay. Bản tiêu chí đã ký giữ nguyên. Sau 60 phút, bàn cho tôi biết quyết định Gate 1 còn đứng được không."*

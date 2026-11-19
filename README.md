@@ -36,10 +36,11 @@ Bạn cần Python 3 và Git; không cần cài gói, tài khoản hay khoá API
 
 **Bước 1. Trưởng nhóm tạo repo của bàn trên GitHub.**
 
-1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Use this template** → **Create a new repository**. Không dùng **Fork**.
-2. Đặt tên đúng dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. `L3A`/`L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”).
-3. Chọn **Public** (Công khai). Team chấm đọc bài qua link repo, nên bàn không cần mời team chấm.
-4. Nếu các bạn trong bàn cần push: **Settings → Collaborators → Add people**, mời các bạn đó.
+1. Mở repo mẫu `https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student`, bấm **Fork** → **Create a new fork**. Ở ô **Owner**, chọn tài khoản của trưởng nhóm.
+2. Ở ô **Repository name**, đặt tên đúng dạng `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, ví dụ `K5-L3A-DAY10-XXX-PoCtoPilotGate1`. `L3A`/`L3B` là lớp của bàn (lớp 3A hoặc 3B). `TenNhom` không dấu, không khoảng trắng (viết `NhomSao`, không viết “Nhóm Sao”). Giữ dấu chọn **Copy the `main` branch only** rồi bấm **Create fork**. Quên đổi tên lúc fork thì vào **Settings → General → Repository name** đổi lại.
+3. Fork của repo mẫu (công khai) luôn ở chế độ **Public** (Công khai), không cần chọn gì: team chấm đọc được bài qua link, không cần mời ai. Repo của bàn hiện trong danh sách fork của repo mẫu nên bàn khác cũng xem được; mỗi bàn tự làm bài của mình ([`RULES.md`](RULES.md)).
+4. **Settings → Collaborators → Add people**: mời các bạn trong bàn (quyền **Write**) để cùng push.
+5. Không mở Pull request về repo mẫu (kể cả nút **Contribute → Open pull request**) và không bấm **Sync fork → Discard commits**: bài chỉ nằm trên repo của bàn. Nếu GitHub báo tài khoản đã có fork của repo mẫu (mỗi tài khoản chỉ có một fork của một repo), đổi tên fork cũ đúng dạng ở trên, hoặc để một bạn khác trong bàn fork.
 
 **Bước 2. Lấy repo về máy** (thay bằng URL repo bàn vừa tạo):
 
@@ -50,14 +51,7 @@ cd K5-L3A-DAY10-XXX-PoCtoPilotGate1
 
 Mọi lệnh trong lab chạy từ thư mục này (nơi có `README.md`).
 
-**Bước 2a. Gắn repo mẫu một lần để nhận thẻ ở phút 125** (clone về chỉ có `origin`). Phải thấy `origin` trỏ về repo của bàn, `upstream` trỏ về repo mẫu. Nếu báo `already exists`, chỉ cần kiểm bằng `git remote -v`.
-
-```bash
-git remote add upstream https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_student.git
-git remote -v
-```
-
-**Bước 2b. Đặt danh tính Git cho repo này.** `user.name` là **mã học viên của trưởng nhóm**; email là địa chỉ giả, không dùng email cá nhân.
+**Bước 2a. Đặt danh tính Git cho repo này.** `user.name` là **mã học viên của trưởng nhóm**; email là địa chỉ giả, không dùng email cá nhân.
 
 ```bash
 git config user.name "<mã học viên của trưởng nhóm>"
@@ -84,7 +78,7 @@ Ba mốc đo: `base` bỏ qua cổng của bàn; `prepared` dùng cổng vòng 1
 
 - **Làm:** mục 2 ở trên; chọn một eval card và một PRD v1.1 từ Lab 9 làm bản chung; chia ba vai: **Kỹ sư cổng** (lệnh, trace, cổng, chỉ số theo dõi) · **Sản phẩm và kinh doanh** (tiêu chí, chi phí, quyết định) · **Vận hành và pháp lý** (người trực, trách nhiệm, dữ liệu cá nhân, runbook, bài nộp).
 - **Điền:** bảng thành viên trong `TEAM.md`.
-- **Xong khi:** `Ran 13 tests … OK`; `git remote -v` có `origin` và `upstream`.
+- **Xong khi:** `Ran 13 tests … OK`; `git remote -v` có `origin` trỏ về repo của bàn (không cần gắn thêm remote nào).
 
 ### Phút 15–65 · Khối 1: tiêu chí, rồi ký · **Phiếu A**
 
@@ -178,15 +172,19 @@ python3 -m lab10.gate --run runs/<mã lần chạy>/report.json
 
 Số câu, bước trên thẻ và mục phiếu đi cùng nhau: câu 3.0 = bước 0 = C1 · câu 3.1 = bước 1–4 = C2, C3, C4 · câu 3.2–3.4 = bước 4 = C5, C6 · câu 3.5–3.6 = bước 5–7 = C7, C8 · câu 3.7 = bước 8 = C9–C11 · quyết định v2 = bước 9 = C12.
 
-**125–135 · Nhận thẻ, đo ngay trước khi sửa (câu 3.0).** Chờ Lab Coach báo đã phát thẻ rồi chạy lệnh nhận thẻ. Mỗi cặp bàn cử một người bốc số S1–S8; bàn **chỉ làm đúng thẻ đã bốc** (`incidents/Sx/card.md`). Ghi số vào dòng `Thẻ đã bốc:` ở đầu Phiếu C, rồi chạy lệnh 6 (thay `Sx` bằng số thẻ):
+**125–135 · Nhận thẻ, đo ngay trước khi sửa (câu 3.0).** Lab Coach báo **số thẻ của bàn** (S1–S8) và mở repo thẻ (chuyển sang công khai). Không cần tài khoản GitHub, lời mời hay gắn remote nào. Bàn **chỉ lấy và chỉ làm đúng thẻ của bàn**. Ghi số vào dòng `Thẻ đã bốc:` ở đầu Phiếu C. Một người chạy ba lệnh nhận thẻ, gõ từng dòng, rồi lệnh 6 (thay `Sx` bằng số thẻ ở mọi chỗ), sau đó `git push -u origin main` để cả bàn kéo về:
 
 ```bash
-git pull --no-rebase --no-edit --allow-unrelated-histories -X ours upstream main
+git fetch https://github.com/VinUni-AI20k/K5_L3_Day10_PoC-to-Pilot_Gate1_cards.git main
+git checkout FETCH_HEAD -- incidents/Sx
+git commit -m "Nhận thẻ Sx"
 python3 -m lab10.grade --incident Sx
 ```
 
+Lệnh nhận thẻ chỉ chép thư mục `incidents/Sx/` (4 file) vào repo của bàn, không gộp lịch sử git, không cần gắn remote nào. Gõ từng dòng (PowerShell cũ trên Windows không hiểu `&&`). `git fetch` báo `Repository not found` hoặc hỏi mật khẩu nghĩa là repo thẻ chưa mở: chờ Lab Coach báo rồi chạy lại. Máy không chạy được git thì lấy thẻ bằng trình duyệt ([FAQ](docs/guide.md#faq)).
+
 - **Điền:** C0 (mã prepared), C1 (cổng vòng 1 đỡ được gì; đối chiếu pre-mortem bằng bút khác màu).
-- **Xong khi:** `ls incidents/` thấy `S1` … `S8` và có `incident-cards.md`; report in `1 integrity | ✅` và dòng `Thẻ đã bốc … khớp`. Lỗi khi kéo thẻ: [FAQ](docs/guide.md#faq).
+- **Xong khi:** `ls incidents/Sx` thấy đủ 4 file (`card.md`, `card.json`, `tickets.jsonl`, `world_patch.json`); report in `1 integrity | ✅` và dòng `Thẻ đã bốc … khớp`. Lỗi khi kéo thẻ: [FAQ](docs/guide.md#faq).
 
 **135–155 · Phân tích (câu 3.1–3.4).** Dò ít nhất hai ticket hỏng theo hai kiểu khác nhau:
 
@@ -268,4 +266,4 @@ git commit -m "LAB 10: bài nộp"
 git push -u origin main
 ```
 
-Gửi link repo, ví dụ `https://github.com/<tài-khoản-trưởng-nhóm>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`, cho team chấm theo cách Lab Coach hướng dẫn. **Mỗi thành viên** còn phải tự nộp link này trên LMS trước deadline ([`SUBMISSION.md`](SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu (`upstream`).
+Gửi link repo, ví dụ `https://github.com/<tài-khoản-trưởng-nhóm>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`, cho team chấm theo cách Lab Coach hướng dẫn. **Mỗi thành viên** còn phải tự nộp link này trên LMS trước deadline ([`SUBMISSION.md`](SUBMISSION.md#deadline-gmt7)). Không push và không mở Pull request lên repo mẫu.
