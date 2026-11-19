@@ -59,6 +59,16 @@ def _facts(ctx, order_id):
     return order, parcel, H.db_delay_days(parcel, ctx.as_of), policy
 
 
+def _strike_cap_hit(ctx, carrier_id):
+    """(số lỗi tự động của hãng trong ngày, trần) nếu hãng đã chạm trần ops_limits; None nếu chưa hoặc không có trần.
+    Sổ lỗi của lab chỉ mô phỏng một ngày nên đếm cả sổ; pilot thật phải lọc theo ngày ghi lỗi."""
+    cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
+    if cap is None:
+        return None
+    today = len(ctx.tools.fault_rows(carrier_id=carrier_id))
+    return (today, cap) if today >= cap else None
+
+
 def pre_guard(ctx):
     # G1 (phần đọc): ghim phiên bản chính sách theo ngày hiệu lực, để trợ lý không đọc nhầm bản đang bật cờ trong index.
     policy = _policy(ctx)
@@ -87,6 +97,17 @@ def _gate_refund(ctx, action):
             ctx.log("g4_ambiguous_parcel", order_id=order["order_id"],
                     late_parcels=[(p["parcel_id"], p["carrier_id"]) for p in late])
             return Verdict.escalate("đơn có nhiều kiện cùng trễ, ticket không nêu kiện nào: chuyển người xác định kiện")
+
+    # G5a (vòng 2, S6) · ticket này sẽ ghi lỗi cho một hãng ĐÃ đủ trần lỗi tự động trong ngày → không tự xử lý một nửa
+    # (hoàn tiền rồi lặng lẽ bỏ lỗi hãng). Chuyển người TRƯỚC khi tiền ra để người duyệt quyết cả khoản hoàn lẫn lỗi hãng.
+    if H.carrier_at_fault(policy, parcel, delay):
+        hit = _strike_cap_hit(ctx, parcel["carrier_id"])
+        if hit:
+            today, cap = hit
+            ctx.log("g5_strike_cap", stage="issue_refund", carrier_id=parcel["carrier_id"], strikes_today=today,
+                    cap=cap, order_id=order["order_id"])
+            return Verdict.escalate(f"hãng {parcel['carrier_id']} đã có {today} lỗi tự động hôm nay (trần {cap}): "
+                                    "chuyển người duyệt quyết khoản hoàn và lỗi hãng")
 
     # G1b · quyền lợi theo nguồn sự thật, trừ phần đã hoàn của đơn (chặn hoàn trùng khi cờ đêm chưa cập nhật / ghi lại).
     entitled = H.entitlement_vnd(policy, order, delay, parcel.get("delay_cause"))
@@ -133,16 +154,15 @@ def _gate_fault(ctx, action):
         ctx.log("g3_fault_blocked", order_id=order["order_id"], parcel_id=parcel["parcel_id"],
                 recorded_cause=parcel.get("delay_cause"), db_delay_days=delay)
         return Verdict.deny("tracking không ghi nguyên nhân thuộc lỗi hãng: không ghi lỗi hãng")
-    # G5 (vòng 2, S6) · trần lỗi tự động mỗi hãng mỗi ngày (ops_limits đã thống nhất với Ops): từ lỗi vượt trần trở đi
-    # không tự ghi; tiền của khách đã hoàn vẫn giữ, lỗi hãng để người duyệt quyết.
-    cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
-    if cap is not None:
-        today = len(ctx.tools.fault_rows(carrier_id=parcel["carrier_id"]))
-        if today >= cap:
-            ctx.log("g5_strike_cap", carrier_id=parcel["carrier_id"], strikes_today=today, cap=cap,
-                    order_id=order["order_id"])
-            return Verdict.deny(f"hãng {parcel['carrier_id']} đã có {today} lỗi tự động hôm nay (trần {cap}): "
-                                "không tự ghi thêm, chuyển người duyệt")
+    # G5b (vòng 2, S6) · lớp dự phòng của G5a: trần lỗi tự động mỗi hãng mỗi ngày (ops_limits đã thống nhất với Ops).
+    # Bình thường G5a đã chuyển người trước khi hoàn; nếu vẫn tới đây thì không tự ghi thêm lỗi.
+    hit = _strike_cap_hit(ctx, parcel["carrier_id"])
+    if hit:
+        today, cap = hit
+        ctx.log("g5_strike_cap", stage="file_carrier_fault", carrier_id=parcel["carrier_id"], strikes_today=today,
+                cap=cap, order_id=order["order_id"])
+        return Verdict.deny(f"hãng {parcel['carrier_id']} đã có {today} lỗi tự động hôm nay (trần {cap}): "
+                            "không tự ghi thêm lỗi hãng")
     right = {"parcel_id": parcel["parcel_id"], "carrier_id": parcel["carrier_id"],
              "driver_id": parcel.get("driver_id"), "delay_days": delay}
     changes = {k: v for k, v in right.items() if action.get(k) != v}
