@@ -31,9 +31,9 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-S6-prepared-20261119-164029-983686` | S6 · prepared | nhận thẻ S6, chưa sửa thêm (đúng cổng vòng 1 đã chốt `a4e3fa99`) | 0,6667 (12 ticket × 5 seed; [0,4167; 0,9167]) | 0,6667 | 270.000đ · 20 · 0 | 0,0833 | Cổng vòng 1 đỡ một nửa lỗi hãng oan (40 → 20) nhưng S6 vẫn FAIL: còn ca không biết kiện nào (S6-20, S6-21) và ca ghi quá mức lỗi/ngày (S6-42, S6-43). |
-| 2 | | Sx · after | | | | | | |
+| 2 | `R-S6-after-20261119-164958-d002e0` | S6 · after | Commit `ef46ba3` của Minh: G4 (chuyển người khi đơn có từ 2 kiện trễ mà ticket không nêu kiện) và G5 (trần 2 lỗi hãng mỗi ngày), kèm 2 monitor mới. Hai cổng cùng một commit | 1,0 (12 ticket × 5 seed; [1,0; 1,0]) | 1,0 | 0đ · 0 · 0 | 0,1667 | `S6-20/21/42/43` hết hỏng, lỗi hãng oan 20 → 0, hoàn sai 270.000đ → 0; chi phí/ticket 3.595đ → 5.228đ, ROI 0,53 → 0,91 (vì thêm ca chuyển người). |
 | 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 4 | `R-base-after-20261119-165003-d002e0` | base · after | (kiểm không regression, không đổi gì thêm so với dòng 2) | 1,0 (110 lần chạy; [1,0; 1,0]) | 1,0 | 0đ · 0 · 0 | 0,2273 | Không ca mới hỏng, bộ nền giữ 1,0; chi phí 4.456đ, ROI 1,24, như mốc prepared. `grade --incident S6` (mã `R-S6-grade-20261119-165003-d002e0`): PASS-VISIBLE. |
 
 ---
 
@@ -94,19 +94,19 @@ người chịu hại thường là bên thứ ba). Định nghĩa đầy đủ 
 
 | Câu hỏi | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | | | |
-| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | | | |
-| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | | | |
-| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | | | |
+| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | **Có**: ticket nêu `parcel_id` hoặc nói "kiện thứ hai" nhưng agent bỏ qua, chọn kiện đầu tiên | **Có**: ticket không nêu kiện nào mà agent tự chọn một kiện để ghi lỗi | Không: ticket rõ, đơn một kiện |
+| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | Không: `tracking.parcels` có đủ `delay` và `carrier_id` từng kiện | **Có**: không đủ dữ liệu để biết khách hỏi kiện nào (hai hãng cùng trễ, ticket không nêu) | **Có**: số lỗi hãng đã ghi trong ngày có trong sổ nhưng không đi vào quyết định của agent |
+| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | **Có**: đơn tách kiện, mỗi kiện một hãng và một tài xế, nhưng agent coi cả đơn là một hãng | **Có**: như lỗi 1; không bên nào là chủ khi hai kiện cùng trễ | **Có**: nhiều ticket cùng ghi vào một hãng, không ai là chủ của trần lỗi trong ngày |
+| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | Không | Không | **Có**: nhiều lỗi nhỏ cộng dồn, hãng GHSH vượt ngưỡng tạm ngưng 3 lỗi trong 7 ngày |
 
 ### Phần 3 · Hướng xử lý (mỗi lỗi một ô)
 
 | | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| Vì sao người gặp coi đây là lỗi | | | |
-| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | | | |
-| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | | | |
-| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | | | |
+| Vì sao người gặp coi đây là lỗi | Kiện của hãng giao đúng hẹn nhưng tài xế vẫn bị trừ thưởng chuyên cần | Hãng bị đổ lỗi khi chưa ai biết kiện nào của khách; kế toán không có căn cứ để gỡ | Hãng nhỏ bị ghi một lèo nhiều lỗi, chạm ngưỡng tạm ngưng mà không qua người duyệt |
+| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | **Khác: cổng hệ thống** (G3 vòng 1): chỉ ghi lỗi cho đúng kiện trễ theo tracking | **Trao quyền kiểm soát cho người** (G4): đơn có từ 2 kiện trễ mà ticket không nêu kiện thì chuyển người | **Trao quyền kiểm soát cho người** (G5): từ lỗi thứ 3 trong ngày của một hãng không tự ghi, chuyển người duyệt |
+| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | Lệnh ghi bị sửa về đúng kiện, hãng, tài xế → hãng chịu lỗi đúng; GHSH không bị trừ oan | Ticket → G4 chuyển NV-HANH → xác định kiện cùng khách → quyết hoàn và ghi lỗi → khách được trả lời. Báo cáo sau sửa: chuyển người 8,3% → 25% | Lỗi thứ 3 → G5 từ chối ghi, tiền khách đã hoàn vẫn giữ → NV-HANH quyết ghi hay không → NV-OANH đối soát cuối tuần |
+| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | `guard_intervention_rate` (sau sửa 0,009 trên bộ nền; 0,667 trên S6) | `ambiguous_multi_parcel_rate` (bộ nền 0, S6 0,1667) | `max_faults_per_carrier_day` (S6 trước sửa 4, sau sửa 2, đúng trần) |
 
 Yêu cầu: ít nhất **hai lỗi có nguồn khác nhau** ở phần 2, và ít nhất một lỗi được xếp đúng là **lỗi chìm**.
 
