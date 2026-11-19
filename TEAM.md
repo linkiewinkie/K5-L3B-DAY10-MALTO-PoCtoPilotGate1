@@ -15,7 +15,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 | --: | --------- | ---- | --- | :---------: |
 |   1 |           |      |     |             |
 |   2 | Dau Hoang Minh | 2A202604011 | Kỹ sư cổng | |
-|   3 |           |      |     |             |
+|   3 | Đặng Minh Thu | 2A202604009 | Kỹ sư cổng (Đo kiểm) | |
 |   4 |           |      |     |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
