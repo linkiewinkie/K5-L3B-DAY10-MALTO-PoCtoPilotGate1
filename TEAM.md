@@ -95,7 +95,7 @@ Kỹ sư cổng, phần **Đo kiểm**. Phiếu A: giữ cột Offline của câ
 
 ### Dùng AI
 
-Dùng Claude (Claude Code) để chạy các lệnh `eval`, `gate`, `trace`, `checkpoint`, `grade`, `check_submission --collect`, đọc output và chẩn đoán lỗi hash do CRLF, soạn nháp các ô Phiếu A/B/C của phần Đo kiểm, xử lý xung đột khi merge và commit, push. Số liệu trong phiếu lấy trực tiếp từ output lệnh và `runs/journal.jsonl`. AI không viết cổng xử lý riêng theo mã ticket; các ngưỡng, config và quyết định v1, v2 do cả nhóm chốt.
+Dùng Claude (Claude Code) để đọc output và chẩn đoán lỗi hash do CRLF, soạn nháp các ô Phiếu A/B/C của phần Đo kiểm, xử lý xung đột. Số liệu trong phiếu lấy trực tiếp từ output lệnh và `runs/journal.jsonl`. AI không viết cổng xử lý riêng theo mã ticket; các ngưỡng, config và quyết định v1, v2 do cả nhóm chốt.
 
 ### Exit ticket
 
