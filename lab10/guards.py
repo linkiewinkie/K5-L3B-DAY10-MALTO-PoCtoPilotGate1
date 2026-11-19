@@ -78,6 +78,16 @@ def _gate_refund(ctx, action):
         return Verdict.escalate("thiếu dữ liệu đơn / tracking / chính sách để kiểm số tiền")
     order, parcel, delay, policy = facts
 
+    # G4 (vòng 2, S6) · đơn tách nhiều kiện: ticket không nêu kiện mà có từ 2 kiện trễ đủ ngưỡng trở lên
+    # → không biết khách hỏi kiện nào, hãng nào chịu lỗi. Không đoán: chuyển người TRƯỚC khi tiền ra.
+    if not ctx.ticket.get("parcel_id"):
+        late = [p for p in order["parcels"]
+                if H.db_delay_days(p, ctx.as_of) >= policy["late"]["min_days_fee"]]
+        if len(late) >= 2:
+            ctx.log("g4_ambiguous_parcel", order_id=order["order_id"],
+                    late_parcels=[(p["parcel_id"], p["carrier_id"]) for p in late])
+            return Verdict.escalate("đơn có nhiều kiện cùng trễ, ticket không nêu kiện nào: chuyển người xác định kiện")
+
     # G1b · quyền lợi theo nguồn sự thật, trừ phần đã hoàn của đơn (chặn hoàn trùng khi cờ đêm chưa cập nhật / ghi lại).
     entitled = H.entitlement_vnd(policy, order, delay, parcel.get("delay_cause"))
     already = sum(r["amount_vnd"] for r in ctx.tools.ledger_rows(order_id=order["order_id"]))
@@ -123,6 +133,16 @@ def _gate_fault(ctx, action):
         ctx.log("g3_fault_blocked", order_id=order["order_id"], parcel_id=parcel["parcel_id"],
                 recorded_cause=parcel.get("delay_cause"), db_delay_days=delay)
         return Verdict.deny("tracking không ghi nguyên nhân thuộc lỗi hãng: không ghi lỗi hãng")
+    # G5 (vòng 2, S6) · trần lỗi tự động mỗi hãng mỗi ngày (ops_limits đã thống nhất với Ops): từ lỗi vượt trần trở đi
+    # không tự ghi; tiền của khách đã hoàn vẫn giữ, lỗi hãng để người duyệt quyết.
+    cap = (ctx.tools.ops_limits() or {}).get("max_auto_strikes_per_carrier_per_day")
+    if cap is not None:
+        today = len(ctx.tools.fault_rows(carrier_id=parcel["carrier_id"]))
+        if today >= cap:
+            ctx.log("g5_strike_cap", carrier_id=parcel["carrier_id"], strikes_today=today, cap=cap,
+                    order_id=order["order_id"])
+            return Verdict.deny(f"hãng {parcel['carrier_id']} đã có {today} lỗi tự động hôm nay (trần {cap}): "
+                                "không tự ghi thêm, chuyển người duyệt")
     right = {"parcel_id": parcel["parcel_id"], "carrier_id": parcel["carrier_id"],
              "driver_id": parcel.get("driver_id"), "delay_days": delay}
     changes = {k: v for k, v in right.items() if action.get(k) != v}
