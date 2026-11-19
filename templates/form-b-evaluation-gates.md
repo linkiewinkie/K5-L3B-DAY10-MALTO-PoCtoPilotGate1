@@ -314,10 +314,10 @@ Mỗi con số kèm một câu lý do, lấy từ `data/world.json` → `ops_lim
 |---|---|---|
 | `business.daily_refund_cap_vnd` | **2.000.000đ/ngày** | Dùng trần hoàn tự động đã được Finance xác định trong `ops_limits.daily_auto_refund_budget_vnd`. |
 | `business.cost_budget_per_ticket_vnd` | **1.500đ/ticket** | Dùng trần phí nền tảng và model trong `ops_limits.max_llm_cost_per_ticket_vnd`. Khi so tổng chi phí gồm cả công duyệt và phí trực, dùng ngưỡng **7.000đ/ticket** đã ký ở Phiếu A. |
-| `business.pilot_scope` (all / warehouse / percent) | **Hai depot HN và DN**, lấy toàn bộ ticket thuộc hai depot | Baseline có **7/22 ticket** ở HN và **5/22** ở DN. Cả hai đạt 100% trên mẫu này. Tỷ lệ duyệt **14,29% ở HN** và **40% ở DN** giúp kiểm pilot trên hai mức tải duyệt. Ticket ngoài hai depot tiếp tục làm thủ công. |
+| `business.pilot_scope` (all / warehouse / percent) | **`all`**: đo vòng 1 trên toàn bộ 22 ticket bộ nền | Lý do loại HCM trước đây là ca `T-002@55` ở `base · base` (hoàn thừa 20.000đ, 1 lỗi hãng oan). Sau khi thêm cổng, `R-base-after-20261119-152941-0f89e1` đạt mọi ngưỡng đã ký trên toàn bộ kho: pass_rate 1,0, không có tác hại, **4.202đ/ticket**, ROI **1,38**. Theo `decision_rule` đã ký, Thu hẹp chỉ chọn khi có ngưỡng trượt trên toàn phạm vi, nên chưa có căn cứ loại HCM. Thu hẹp còn làm phí trực mỗi ticket tăng từ khoảng **1.364đ** (30.000đ/22) lên **2.500đ** (30.000đ/12). |
 | `business.roi_min` | **0,40** | Dùng sàn ROI **40%** đã ký ở Phiếu A. Mỗi 1.000đ chi cho pilot phải tạo ít nhất **400đ tiết kiệm ròng** sau khi tính phí trợ lý, phí trực, công duyệt và tiền hoàn sai. |
 
-Phạm vi HN và DN bao phủ **12/22 ticket** bộ nền. Cần đo lại với cấu hình cuối trước khi quyết định v1. Giữ `T-002@55` (kho HCM) làm bằng chứng hồi quy cho cổng code, vì ca này nằm ngoài phạm vi pilot vừa chọn.
+Lần `after` ở trên dùng cổng code và cấu hình vận hành cũ, nên sau khi hoàn tất cấu hình vòng 1 phải đo lại ở mốc `prepared`. Nếu report `prepared` vẫn đạt đủ tiêu chí đã ký và không còn dòng vượt trần, v1 có căn cứ chọn Tiếp tục. Nếu còn ngưỡng trượt, xét lại Thu hẹp theo `decision_rule`. Đo toàn bộ kho trong lab giữ đủ ca kiểm thử, kể cả `T-002@55` (kho HCM) làm bằng chứng hồi quy cho cổng code. Pilot thật theo đề bài vẫn chạy ở **2 depot**; hai depot cụ thể và lý do chọn sẽ ghi trong quyết định v1 ở B8, dựa trên khối "theo kho và hãng" của report `prepared`.
 
 ### B7.5 · Câu 2.10 · Cổng con người, vận hành, pháp lý + Runbook phần 1–3
 
