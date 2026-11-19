@@ -48,18 +48,20 @@ python3 -m lab10.grade --incident Sx
 ```
 
 - Mã lần chạy grade: `R-S6-grade-20261119-164029-983686` · base: `R-S6-before-20261119-164029-983686` · prepared: `R-S6-prepared-20261119-164029-983686` (after cùng lúc chưa sửa: `R-S6-after-20261119-164029-983686`)
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): cổng G3 (ghi lỗi đúng kiện, đúng hãng theo tracking) sửa được nhóm ticket **có nêu kiện**: `S6-01` … `S6-04` hỏng cả 20/20 lượt ở base, đạt hết ở prepared. Trên bộ thẻ, lỗi hãng oan giảm **40 → 20**, pass_rate **0,3333 → 0,6667**. Theo phân khúc: hãng GHSH 30 → 15 lỗi oan, DNB 10 → 5; kho HN pass_rate 0,5 → 1,0. **Chưa đỡ được:** hoàn sai vẫn **270.000đ** (kho HCM; hãng DNB 140.000đ, GHSH 130.000đ), và hai nhóm ca vẫn hỏng 5/5 lượt. (1) `S6-20`, `S6-21`: ticket không nêu kiện mà đơn có hai kiện cùng trễ. G3 tự lấy kiện trễ nhất (`g3_fault_modified` sang VNX), tức là **vẫn đoán**; trợ lý còn hoàn 26.000đ trước đó, trong khi nhãn yêu cầu chuyển người. (2) `S6-42`, `S6-43`: từng lỗi đúng về một ticket, nhưng GHSH bị ghi vượt trần **2 lỗi tự động mỗi hãng mỗi ngày** (`ops_limits.max_auto_strikes_per_carrier_per_day`).
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: **không có dòng VƯỢT TRẦN** ở cả ba mốc (bộ nền ở prepared: 0 ca ùn, 4.456đ/ticket, ROI 1,24, hoàn sai ngày tệ nhất 0đ). Nhưng trên bộ thẻ, mốc prepared còn trượt **3 ngưỡng đã ký**: pass_rate 0,6667 (< 0,96), hoàn sai 270.000đ (> 0), 20 lỗi hãng oan (> 0). Khối vượt trần của report không có dòng nào cho trần lỗi mỗi hãng mỗi ngày, nên report không tự báo khi một hãng bị dồn lỗi.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Chủ yếu **pháp lý**: bên thứ ba là hãng GHSH và tài xế bị phạt, trừ thưởng vì lỗi không phải của mình. Gốc **kỹ thuật**: hệ thống coi "một đơn có một hãng chịu lỗi", trong khi đơn tách kiện có nhiều hãng. Thêm **con người và vận hành**: trần lỗi mỗi hãng mỗi ngày đã thống nhất với Ops nhưng không có cổng hay người nào thực thi.
+- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? **Có một phần.** B6 dòng 4 (Pháp lý, ưu tiên 3) đã viết "Hãng đã bị ghi lỗi oan khi hồ sơ tracking không đủ căn cứ", và cổng đề xuất là kiểm căn cứ ghi lỗi theo đúng kiện và hãng. Cổng vòng 1 đỡ được **một nửa** (40 → 20 lỗi oan), nhưng không giảm đồng nào trong 270.000đ hoàn sai. Bàn không nghĩ tới hai trường hợp. Thứ nhất, bàn chỉ nghĩ "chọn đúng kiện" mà không nghĩ "khi không biết kiện nào thì phải dừng, không được chọn". Thứ hai, tác hại dồn lỗi nằm ở **tổng trong ngày**: mỗi lỗi riêng lẻ đều hợp lệ, nên soát từng ticket (như B2) không thấy.
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| Trợ lý đã tự chọn một hãng để ghi lỗi, và đã hoàn tiền, khi đơn có nhiều kiện cùng trễ mà khách không nói kiện nào. | Kỹ thuật | Trace: so `tracking.parcels` với `file_carrier_fault` và `issue_refund` (`S6-20@11`, `S6-21@11`); monitor `ambiguous_multi_parcel_rate`. |
+| Một hãng nhỏ đã bị ghi hơn 2 lỗi tự động trong cùng một ngày, vượt trần đã thống nhất với Ops, và tài xế bị phạt dồn. | Con người và vận hành | `ops_limits.max_auto_strikes_per_carrier_per_day = 2`; sổ lỗi hãng theo hãng và ngày; monitor `max_faults_per_carrier_day`. |
+| Hãng nhỏ đã khiếu nại và đòi đối soát vì bị trừ thưởng, tạm ngưng theo lỗi ghi sai (GHSH mất 150.000đ mỗi lỗi, bị tạm ngưng sau 3 lỗi trong 7 ngày). | Pháp lý | `carriers[].penalty_per_strike_vnd`, `suspend_after_strikes_7d` trong `data/world.json`; `wrongful_carrier_faults` theo hãng trong khối "theo kho và hãng". |
 
 ---
 
@@ -251,9 +253,14 @@ Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chư
 
 ### Câu 3.2 · Một specification mà nếu bị vi phạm thì gây ra tác hại trên thẻ
 
-Kiểm được bằng code hoặc bằng một con số trong report: …
+Kiểm được bằng code hoặc bằng một con số trong report: **Mỗi lệnh `file_carrier_fault` chỉ được ghi cho đúng kiện bị trễ và đúng hãng chở kiện đó, theo tracking từng kiện; khi không xác định được kiện thì không đoán.** Cụ thể, ba điều kiện cùng phải đúng:
+1. Kiện bị ghi lỗi là kiện ticket nêu (`parcel_id`). Nếu ticket không nêu kiện thì đó phải là **kiện trễ duy nhất** của đơn, tính theo mốc `late.min_days_fee` của chính sách có hiệu lực. Nếu đơn có **từ 2 kiện trễ trở lên** mà ticket không nêu kiện, trợ lý **không hoàn tiền tự động, không ghi lỗi**, và chuyển người xác định kiện **trước** lệnh ghi đầu tiên.
+2. Kiện đó có `delay_cause` được ghi trong tracking và thuộc `fault_causes` của chính sách.
+3. Số lỗi tự động của **một hãng trong một ngày** không vượt `ops_limits.max_auto_strikes_per_carrier_per_day` (2). Từ lỗi thứ 3, lỗi hãng chờ người duyệt; khoản hoàn đúng của khách vẫn giữ.
 
-Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
+Vi phạm điều kiện 1 hoặc 2 là ghi lỗi oan cho một hãng không liên quan. Vi phạm điều kiện 3 là dồn phạt lên một hãng nhỏ trong một ngày. Cả hai đúng là tác hại trong tin nhắn của trưởng nhóm tài xế GHSH.
+
+Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): trong `lab10/guards.py`, **G3** (đúng kiện, đúng hãng, có nguyên nhân), **G4** (đơn nhiều kiện cùng trễ mà ticket không nêu kiện thì chuyển người trước khi tiền ra), **G5** (trần lỗi mỗi hãng mỗi ngày). Trong report: `wrongful_carrier_faults = 0` và `wrongful_refund_vnd = 0` trên bộ S6 và bộ nền, không có ca bộ nền mới hỏng. Hai monitor: `max_faults_per_carrier_day ≤ 2` và `ambiguous_multi_parcel_rate` (mọi ca này phải ở trạng thái `escalated`).
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
