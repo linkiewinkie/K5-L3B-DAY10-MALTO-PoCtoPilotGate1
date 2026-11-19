@@ -99,7 +99,9 @@ def _gate_refund(ctx, action):
     if amount > policy["auto_limit_vnd"]:
         appr_id = action.get("approval_id")
         appr = next(iter(ctx.tools.lookup_approvals(approval_id=appr_id)), None) if appr_id else None
-        ok = (appr is not None and appr.get("order_id") == order["order_id"] and appr.get("status") == "valid"
+        ok = (appr is not None and appr.get("order_id") == order["order_id"]
+              and appr.get("ticket_id", action["ticket_id"]) == action["ticket_id"]     # phê duyệt gắn với đúng claim này
+              and appr.get("status") == "valid"
               and appr.get("expires_at", "") >= ctx.as_of and amount <= appr.get("max_vnd", 0))
         if not ok:
             ctx.log("g2_approval_invalid", order_id=order["order_id"], amount=amount, approval_id=appr_id)

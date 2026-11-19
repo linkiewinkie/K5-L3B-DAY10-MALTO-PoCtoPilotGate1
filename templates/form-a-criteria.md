@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Bước **chọn độ trễ dùng để tính tiền** (agent bước 2: tra tracking, rồi có thể bị `model_override` đè): trợ lý dùng độ trễ của tracking DB hay số ngày khách tự khai. | |
+| **Thước đo** (một câu, có đơn vị) | Tỉ lệ lần chạy (%) mà `proposal.delay_days_used` ≠ `tracking.db_delay_days` **và** việc lệch đó làm đổi số tiền so với `entitlement_vnd` tính bằng độ trễ DB. | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | `runs/<mã lần chạy>/traces/`: sự kiện `tracking`, `model_override`, `proposal`; bộ nền 22 ticket × 5 seed = 110 lần chạy. Nguồn sự thật: `orders[].parcels` (`promised_date`, `delivered_date`, `delay_cause`) và chính sách hiệu lực theo `as_of`. Nhãn không cần người gán: tính lại bằng `helpers.entitlement_vnd`; Đo kiểm soát tay 10% mẫu. | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Tử số = số lần chạy có `proposal` mà hai độ trễ khác nhau **và** `entitlement(delay_days_used) ≠ entitlement(db_delay_days)`. Mẫu số = số lần chạy có sự kiện `proposal`. Lần chạy dừng trước `proposal` (chuyển người, intent khác, không tìm thấy đơn) loại khỏi mẫu số và đếm riêng. Đơn nhiều kiện: dùng kiện trễ nhất, như agent. | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không thấy khi chính tracking DB sai (đã giao nhưng `delivered_date` trống); không thấy lỗi ở bước khác (chọn chính sách, tìm phê duyệt, chỉ thị trong ghi chú đặt hàng); không thấy độ trễ lệch mà không đổi số tiền. | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
