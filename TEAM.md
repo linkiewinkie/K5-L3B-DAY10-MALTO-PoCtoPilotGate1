@@ -3,7 +3,7 @@
 ## Thông tin nhóm
 
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):
-- Lớp: `L3A` / `L3B`
+- Lớp: `L3B`
 - Repo của bàn: `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`
 - Thẻ sự cố đã bốc (S1–S8):
 
@@ -15,7 +15,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 | --: | --------- | ---- | --- | :---------: |
 |   1 |           |      |     |             |
 |   2 |           |      |     |             |
-|   3 |           |      |     |             |
+|   3 |  Đặng Minh Thu         |   2A202604009   |   Kỹ sư cổng Đo kiểm   |             |
 |   4 |           |      |     |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
