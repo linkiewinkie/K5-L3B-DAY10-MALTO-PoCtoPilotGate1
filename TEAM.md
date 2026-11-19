@@ -44,6 +44,39 @@ Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
 
 Một điều học được, một điều còn chưa chắc.
 
+## NguyenXuanKhanhLinh-2A202603801
+
+### Phần việc phụ trách
+
+Trưởng nhóm, vai **Sản phẩm và kinh doanh**. Phiếu A: câu 1.1 (A1), 1.5 (A3), 1.6 (A4, cả ranh giới đầu ra) và ký ở A5. Phiếu B: B3 (câu 2.3), dẫn pre-mortem B6 (câu 2.5), B7.4 (câu 2.9), quyết định v1 ở B8. Phiếu C: C1 (câu 3.0), C5 câu 3.2, dẫn fault tree C6 (câu 3.4), bảng sửa C7 (câu 3.5), quyết định v2 ở C12 và ba dòng bắt buộc. File: `config/acceptance_criteria.json`, mục `business` trong `config/operating_gates.json`. Điều phối phân công, gộp nhánh của cả bàn vào `main`.
+
+### Đóng góp cụ thể
+
+- Vòng 1: viết Bản tiêu chí ở A4 và chép sang `acceptance_criteria.json` (pass_rate ≥ 0,96, pass^k ≥ 0,90, ba chỉ số an toàn bằng 0, chuyển người ≤ 0,35, chi phí ≤ 7.000đ/ticket, ROI ≥ 0,40, 0 ca ùn, `stop_condition`, bốn dòng `decision_rule`), rồi ký và push trước lần đánh giá đầu tiên.
+- B3: bản đồ dữ liệu của trợ lý (nguồn sự thật, bản sao `refund_status` và `index_active`, trường tự khai) và ví dụ drift `REFUND-v4` ngày 01/12/2026.
+- B7.4: điền mục `business`. Đổi `pilot_scope` từ HN và DN về `all` khi `base · after` đạt mọi ngưỡng trên toàn bộ kho, vì `decision_rule` đã ký chỉ cho Thu hẹp khi có ngưỡng trượt.
+- B8: quyết định v1 **Tiếp tục**, chọn 2 depot HN và HCM cho pilot thật theo số ở mốc `prepared`.
+- Vòng 2 (thẻ S6): C1 đối chiếu pre-mortem (B6 đã đoán "lỗi oan cho hãng", nhưng bỏ sót "không biết kiện nào thì phải dừng" và "dồn lỗi theo ngày"); C5 câu 3.2; fault tree C6 bốn nhánh; bảng sửa C7.
+- Khi trace `S6-42` sau sửa, phát hiện bản đầu của G5 chỉ bỏ lệnh ghi lỗi sau khi đã hoàn tiền, nên lỗi thứ 3 không vào hàng chờ người duyệt. Thêm G5a để chuyển người trước khi tiền ra.
+- C12: quyết định v2 **Tiếp tục** kèm điều kiện quyết định lại sớm (chi phí > 7.000đ hoặc `max_faults_per_carrier_day` > 2), và ba dòng bắt buộc.
+- Gộp nhánh của cả bàn, sửa xung đột (nhánh từng ghi đè Phiếu A, xung đột C2 giữa Đo kiểm và Code), giữ nguyên hai file đã ký và bản chốt vòng 1.
+
+### Bằng chứng
+
+- Tiêu chí: commit ký `d385325`, hash `9ef97066`. Phiếu A: `4fa305b`.
+- Vòng 1: `c3f98cb` (B3, B6, B7.4), `94e423b` (phạm vi `all`), `02fa2be` (B8, quyết định v1).
+- Vòng 2: `e789dc2` (C1, C5), `c6f02b6` (C6, C7), `324d1ce` (G5a), `e6ce910` (C12), `8f4f9e0` (C9 mã lần chạy, C10, Runbook 4–5).
+- Số đo dùng cho quyết định (Thu chạy): bộ nền prepared `R-base-prepared-20261119-162628-983686`; S6 after `R-S6-after-20261119-170022-89a89a`; grade `R-S6-grade-20261119-170023-89a89a` PASS-VISIBLE.
+
+### Dùng AI
+
+Dùng Claude (Claude Code) để đọc code và dữ liệu của lab, soạn nháp Bản tiêu chí và căn cứ từng ngưỡng, sửa G5a trong `guards.py`, gộp nhánh và xử lý xung đột Git.
+
+### Exit ticket
+
+- Học được: ký tiêu chí trước khi đo buộc quyết định phải bám vào số. Khi `base · after` đạt mọi ngưỡng, nhóm không còn căn cứ để Thu hẹp như dự định ban đầu, nên phải đổi phạm vi đo về `all`. Một cổng "chặn" cũng cần trace lại sau khi sửa, vì chặn nhầm chỗ (sau lệnh hoàn) có thể làm mất việc của người duyệt.
+- Còn chưa chắc: trần 7.000đ/ticket có hợp lý cho pilot thật không, khi trên S6 chi phí đã lên 6.862đ chỉ vì thêm ca chuyển người; và trần 2 lỗi/hãng/ngày có đủ bảo vệ hãng nhỏ trong cửa sổ 7 ngày của hợp đồng hay không.
+
 ## DauHoangMinh-2A202604011
 
 ### Phần việc phụ trách
