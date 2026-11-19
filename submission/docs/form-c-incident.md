@@ -447,7 +447,7 @@ lab10.guards + config legal -> [{'order_id': 'O-1026', …,
 
 <a id="c9"></a>
 
-## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `__________`)
+## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `R-S6-after-20261119-170022-89a89a`)
 
 **Sau sửa — theo C0 dòng 3–4:** `R-S6-after-20261119-170022-89a89a`; hồi quy `R-base-after-20261119-170023-89a89a`; grade `R-S6-grade-20261119-170023-89a89a`. Trên bộ nhìn thấy, lỗi hãng oan 20 → 0, hoàn sai 270.000đ → 0; bộ nền không có ca mới hỏng. Đây là kết quả mô phỏng, không chứng minh ngăn mọi tình huống thực tế.
 
@@ -474,13 +474,10 @@ Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [g
 
 ## C10 · Câu 3.7 · Risk register (thêm ít nhất 1 dòng sau sự cố)
 
-| Rủi ro theo dõi bổ sung | Khả năng | Tác động | PIC | Tín hiệu / ngưỡng | Xử lý và ảnh hưởng quyết định | Nhóm |
-|---|---|---|---|---|---|---|
-| Dồn lỗi lên một hãng hoặc quy lỗi khi chưa rõ kiện | Chưa định lượng; prepared S6 còn 20 lỗi oan | Hãng/tài xế bị phạt, mất thưởng | Lê Thế Anh | `wrongful_carrier_faults` > 0 hoặc `max_faults_per_carrier_day` > 2 | Báo Hạnh, đề nghị Tùng dừng ghi lỗi và xác minh; không chọn Tiếp tục khi ngưỡng đã ký không đạt | MANAGE |
-
 | Rủi ro | Khả năng | Tác động | Người phụ trách (PIC, một người) | Dấu hiệu (metric nào, ngưỡng nào) | Xử lý | Ảnh hưởng bước đánh giá | Nhóm chức năng (GOVERN / MAP / MEASURE / MANAGE) |
 |---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| Dồn lỗi lên một hãng, hoặc quy lỗi khi chưa rõ kiện | Trung bình. Prepared S6 còn 20 lỗi oan; after còn 0 nhờ G4 và G5, nhưng G5 chưa lọc theo ngày và bộ thử không thấy cửa sổ 7 ngày của hợp đồng | Cao: hãng và tài xế bị phạt, mất thưởng, hãng nhỏ có thể bị tạm ngưng tuyến | Lê Thế Anh | `max_faults_per_carrier_day` > 2 (monitor); `wrongful_carrier_faults` > 0 (report) | Hạnh báo Tùng tắt `file_carrier_fault`, kiểm sổ lỗi theo hãng và tracking từng kiện; Oanh gỡ lỗi sai với hãng | Không chọn Tiếp tục khi ngưỡng đã ký không đạt; trong pilot, monitor > 2 là điều kiện quyết định lại sớm và xét Thu hẹp (C12) | MANAGE |
+| Chi phí mỗi ticket vượt trần khi nhiều ca chuyển người (hãng có ngày xấu, đơn tách kiện nhiều) | Trung bình. S6 after: 6.862đ/ticket, chỉ cách trần 7.000đ 138đ; 41,67% ticket vào hàng chờ | Trung bình: pilot đắt hơn mức đã ký, ROI tụt dưới 0,40 | Nguyễn Xuân Khánh Linh | `cost_per_ticket_vnd` > 7.000đ hoặc `roi` < 0,40 (report); `ambiguous_multi_parcel_rate` tăng (monitor) | Xem tỷ lệ ca G4, G5a chuyển người theo kho; cân nhắc thêm người trực hoặc cắt kho có tỷ lệ chuyển người cao | Vượt trần chi phí hoặc ROI là điều kiện quyết định lại sớm; khi đó chọn Thu hẹp theo `decision_rule` | MEASURE |
 
 Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "Dấu hiệu" phải là một metric có trong `monitors.py` hoặc trong report.
 
@@ -511,19 +508,19 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | Câu hỏi | Trả lời |
 |---|---|
-| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | |
-| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | |
-| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | |
-| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | |
-| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | |
-| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | |
-| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | |
+| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | **Chưa có.** Runbook 2 chỉ theo dõi `wrongful_carrier_faults`, chỉ số cần nhãn nên không có trong vận hành thật. Tín hiệu lẽ ra phải báo là **số lỗi tự động của một hãng trong một ngày**, nay là monitor `max_faults_per_carrier_day` (S6: 4 ở base, 2 sau sửa). |
+| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | Thêm `max_faults_per_carrier_day`: trước đây không có ngưỡng; nay vàng = 2 (chạm trần `ops_limits`), đỏ > 2. Thêm `ambiguous_multi_parcel_rate` để theo dõi tải mà G4 đẩy sang người duyệt (S6: 0,1667). Các ngưỡng đã ký trong `acceptance_criteria.json` giữ nguyên. |
+| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | Không đổi số người trực: 1 người, 6 ca/giờ. Chị Hạnh (NV-HANH) nhận thêm các ca G4, G5a chuyển sang và quyết có ghi lỗi thứ 3 cho hãng hay không. Anh Tùng (NV-TUNG) giữ công tắc `file_carrier_fault`. Chị Oanh (NV-OANH) đối soát và gỡ lỗi sai với hãng. |
+| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | Phạm vi giữ HN và HCM. Quy trình mới: đơn nhiều kiện cùng trễ mà không rõ kiện, và ticket sắp ghi lỗi thứ 3 trong ngày cho một hãng, đều chuyển người **trước khi hoàn tiền** (G4, G5a). Khi monitor vượt 2, Hạnh báo Tùng kiểm sổ lỗi theo hãng, theo ngày và tracking từng kiện; xác nhận sai thì Tùng tắt `file_carrier_fault`. Kiểm mẫu giữ 10%, ghi chú giải thích giữ bật, trần hoàn trong ngày giữ 2.000.000đ. |
+| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | Chị Oanh báo hãng GHSH (và hãng bị ghi nhầm, như VNX, DNB) danh sách lỗi đã gỡ, đề nghị hãng hoàn lại khoản trừ thưởng của tài xế. Chị Hạnh báo ca duyệt về hai loại ca mới sẽ được chuyển sang. **Đề xuất** thời hạn: trong 1 ngày làm việc sau khi xác nhận lỗi sai. Kênh và người liên hệ phía hãng chưa được nhóm xác nhận. |
+| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | **Không có** trong sự cố S6: report ở cả ba mốc ghi 0 lần lộ dữ liệu cá nhân cho hãng; cổng G3b chỉ cho các trường trong `carrier_notice_fields` đi ra ngoài. |
+| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | Qua **phản hồi của người**: trưởng nhóm tài xế GHSH tự tra ra sau cả tháng bị trừ thưởng. Nguồn bàn chưa có: chỉ số không cần nhãn về lỗi theo hãng theo ngày (nay đã thêm `max_faults_per_carrier_day`), và kênh để hãng khiếu nại trước kỳ tính thưởng. |
 
 ### Runbook 5 · Ba kịch bản "nếu … thì …" cho tuần đầu chạy thử thật
 
-1. Nếu số ticket tăng gấp ___ lần trong một giờ thì: …
-2. Nếu nhà cung cấp LLM lỗi quá ___ phút thì: …
-3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: …
+1. Nếu số ticket tăng gấp **3** lần trong một giờ thì: hoặc khi chờ duyệt từ 45 phút, chị Hạnh báo anh Tùng rà năng lực 6 ca/người/giờ và gọi người hỗ trợ; nếu vượt SLA 60 phút, trưởng nhóm quyết định thu hẹp phạm vi hoặc chuyển ticket sang xử lý tay.
+2. Nếu nhà cung cấp LLM lỗi quá **15** phút (**đề xuất**, nhóm chốt con số) thì: cổng G1a đã chuyển người từng ticket gặp "fail open"; khi lỗi kéo dài, chị Hạnh báo anh Tùng tạm tắt `issue_refund` và `file_carrier_fault`, chuyển toàn bộ ticket sang xử lý tay để hàng chờ không vượt SLA 60 phút; chỉ bật lại sau khi xác minh LLM đã ổn.
+3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: chị Hạnh giữ lại thao tác liên quan, đối chiếu tracking và sổ lỗi từng kiện, chuyển chị Oanh hoặc anh Tùng khi cần, và chỉ cho trợ lý chạy tiếp loại ca đó sau khi tìm ra nguyên nhân. Các bước và thời hạn này chưa được diễn tập.
 
 ---
 
